@@ -1,0 +1,498 @@
+# TASK: Build Reusable Rental Management Authentication UI Components (React JSX)
+
+## 1. Objective
+
+Implement six polished, reusable React UI components based on the attached Login and User Registration mockup screenshots for our Rental Management application.
+
+**STRICT SCOPE: COMPONENTS ONLY. Do not build pages, page layouts, forms that assemble the authentication screens, or application architecture.**
+
+All custom components must be created inside:
+
+`frontend/src/components/ui/`
+
+My teammate will integrate these components into the final pages later. Prioritize reusable props, consistent styling, accessibility, clean component boundaries, and predictable behavior.
+
+### Mandatory requirements
+
+1. Inspect the existing frontend project and dependencies before making changes.
+2. Complete dependency checks and install or generate any missing UI primitives before writing custom component code.
+3. Use the existing shadcn/ui setup and the official documentation linked in this prompt.
+4. Implement all custom components using **React JSX and JavaScript only**.
+5. Use `.jsx` file extensions for custom React components.
+6. Do not introduce TypeScript, interfaces, type annotations, generics, `.ts` files, or `.tsx` files for this task.
+7. Make every custom component reusable through configurable props instead of hardcoding labels, values, styles, and behavior.
+8. Match the attached mockup's visual appearance.
+9. Implement components independently. Do not assemble them into Login or Registration pages.
+
+---
+
+## 2. Phase One: Inspect and prepare dependencies BEFORE coding
+
+Complete this phase before writing custom component source code.
+
+### Step 1 — Inspect the existing frontend
+
+Examine:
+
+- `frontend/package.json`
+- Existing lockfiles, such as `package-lock.json`, `pnpm-lock.yaml`, or `yarn.lock`
+- `frontend/src/components/ui/`
+- `frontend/src/lib/utils.js` or the existing equivalent utility file
+- `frontend/components.json`, if present
+- Existing JavaScript/JSX configuration
+- Tailwind CSS configuration and global styles
+- Existing shadcn/ui Button, Input, Label, and Progress implementations
+
+Determine which package manager is being used, whether React and Tailwind CSS are configured, which shadcn/ui component base is installed, and which components already exist.
+
+The project uses JavaScript and JSX. Do not migrate the project to TypeScript or introduce a TypeScript template.
+
+Preserve existing configuration, component implementations, naming conventions, and import aliases.
+
+### Step 2 — Synchronize existing dependencies
+
+Run commands from the `frontend` directory.
+
+If the project uses npm:
+
+```bash
+cd frontend
+npm install
+```
+
+If it already uses pnpm, Yarn, or Bun, use the existing package manager instead. Do not mix package managers or create additional lockfiles.
+
+### Step 3 — Ensure required shadcn/ui primitives exist
+
+The custom components will reuse the following primitives:
+
+- `Button`
+- `Input`
+- `Label`
+- `Progress`
+
+If shadcn/ui is already configured, add only the missing primitives.
+
+For an existing npm-based shadcn/ui setup, the command is:
+
+```bash
+npx shadcn@latest add button input label progress
+```
+
+If some primitives already exist, preserve them and add only what is missing.
+
+If shadcn/ui has not been initialized, configure it for the existing JavaScript-based frontend using the official installation documentation. Do not scaffold a new application, replace the frontend, or overwrite existing configuration.
+
+When initializing or adding components, ensure the project continues to use JavaScript/JSX. Do not accept a setup that generates TypeScript source files for this task.
+
+Inspect the generated files and dependency changes before proceeding. Let the installed shadcn configuration determine the appropriate dependencies and implementation. Install additional packages only when the actual component imports or existing configuration require them.
+
+Do not add unnecessary libraries such as React Hook Form, Zod, Formik, another UI framework, or an icon library solely for these components.
+
+**Dependency phase completion criteria:** Dependencies are synchronized, required shadcn primitives are available, and the existing JavaScript conventions, styling utilities, and import paths are understood.
+
+Only then begin writing custom components.
+
+---
+
+## 3. Official documentation — use these references
+
+Use the official documentation as the implementation reference. Do not conduct a separate design-discovery exercise or search for alternative component libraries, templates, or competing implementations.
+
+- shadcn/ui installation for Vite: https://ui.shadcn.com/docs/installation/vite
+- Button: https://ui.shadcn.com/docs/components/button
+- Input: https://ui.shadcn.com/docs/components/input
+- Label: https://ui.shadcn.com/docs/components/label
+- Progress: https://ui.shadcn.com/docs/components/progress
+
+Use the APIs and component base compatible with the existing project. Do not migrate between Radix UI, Base UI, or other implementations as part of this task.
+
+shadcn/ui provides source components that can be installed into the project. Reuse and customize those components instead of duplicating their underlying primitives.
+
+---
+
+## 4. Component scope and required file structure
+
+Create these six custom reusable components inside `frontend/src/components/ui/`.
+
+```text
+frontend/src/components/ui/
+├── button.jsx                       # Existing shadcn primitive, preserve it
+├── input.jsx                        # Existing shadcn primitive, preserve it
+├── label.jsx                        # Existing shadcn primitive, preserve it
+├── progress.jsx                     # Existing shadcn primitive, preserve it
+├── brand-title.jsx                  # Custom component
+├── home-button.jsx                  # Custom component
+├── auth-field.jsx                   # Custom component
+├── auth-submit-button.jsx           # Custom component
+├── auth-link.jsx                    # Custom component
+└── password-strength-indicator.jsx  # Custom component
+```
+
+The file structure is illustrative. Preserve the actual filenames and extensions of existing shadcn primitives if they are already installed. Do not rename existing `.tsx` files as part of the task; simply reuse their existing exports if compatible, and ensure all six new custom components are implemented in `.jsx`.
+
+Never overwrite unrelated existing components.
+
+Use named exports when consistent with the project's existing conventions. JavaScript JSX only: no TypeScript annotations or interfaces.
+
+### Component 1 — `BrandTitle`
+
+**Purpose:** Display the brand text in the upper-left corner of both mockups.
+
+**Props:**
+
+- `text`: displayed text; defaults to `"Rental Management"`.
+- `href`: optional destination. When supplied, render the brand as a link.
+- `className`: optional styling override.
+
+**Visual requirements:**
+
+- Blue brand text.
+- Small, clean typography.
+- Minimal styling.
+- No unnecessary background, card, or decorative icon.
+
+The component must support static text and linked text without requiring separate implementations.
+
+### Component 2 — `HomeButton`
+
+**Purpose:** Render the compact Home CTA shown in the upper-right corner of both mockups.
+
+**Props:**
+
+- `label`: configurable label; defaults to `"Home"`.
+- `href`: optional navigation destination.
+- `onClick`: optional callback.
+- `disabled`: optional boolean.
+- `className`: optional styling override.
+
+**Visual requirements:**
+
+- White or transparent background.
+- Thin blue outline.
+- Blue text.
+- Fully rounded, oval-shaped appearance.
+- Compact dimensions with adequate clickable space.
+- Visible keyboard-focus style.
+- Appropriate disabled state.
+
+Use the existing shadcn `Button` primitive.
+
+If `href` is provided, preserve link semantics. Do not nest an anchor element inside a button. Use an appropriate anchor or project-supported link mechanism without assuming that a particular router is installed.
+
+Do not implement application routing or invent a destination.
+
+### Component 3 — `AuthField`
+
+**Purpose:** This is the primary reusable component. It must support every input field in both mockups.
+
+Required use cases:
+
+- Login email
+- Login password
+- Registration email
+- Registration name
+- Registration phone
+- Registration password
+- Confirm password
+
+**Do not create separate custom field implementations for these seven inputs.** Configure instances of `AuthField` using props.
+
+**Props:**
+
+- `id`: unique input identifier.
+- `name`: optional field name.
+- `label`: optional field label.
+- `type`: native input type, such as `"text"`, `"email"`, `"tel"`, or `"password"`.
+- `placeholder`: optional placeholder text.
+- `value`: optional controlled value.
+- `defaultValue`: optional initial uncontrolled value.
+- `onChange`: input change callback.
+- `layout`: `"horizontal"` or `"stacked"`.
+- `required`: optional boolean.
+- `disabled`: optional boolean.
+- `error`: optional validation error message.
+- `autoComplete`: optional native autocomplete value.
+- `endAdornment`: optional React element rendered as trailing content, such as the password-strength indicator.
+- `className`: wrapper styling override.
+- `labelClassName`: optional label styling override.
+- `inputClassName`: optional input styling override.
+
+Also forward appropriate standard HTML input attributes and accessibility attributes so the component remains extensible.
+
+Do not allow `value` and `defaultValue` to be supplied simultaneously. Respect native controlled and uncontrolled input behavior.
+
+**Layout behavior**
+
+For `layout="horizontal"`:
+
+- Render the label to the left of the input.
+- Match the Login screenshot.
+- Maintain consistent label and input alignment.
+- Allow the layout to stack on smaller screens when necessary.
+
+For `layout="stacked"`:
+
+- Render the label above the input.
+- Match the Registration screenshot.
+- Maintain consistent spacing between label and input.
+
+**Visual requirements**
+
+- White input background.
+- Thin, neutral-colored border.
+- Rounded rectangular shape.
+- Consistent height, typography, and spacing.
+- Subtle neutral placeholder text.
+- Clearly visible focus styles.
+- Appropriate error and disabled states.
+- Styling overrides through props.
+
+**Accessibility requirements**
+
+- Associate labels with inputs using `htmlFor` and `id`.
+- Provide accessible validation messages.
+- Apply `aria-invalid` and appropriate error-description associations when errors exist.
+- Preserve keyboard navigation and native input behavior.
+
+Use the existing shadcn `Label` and `Input` primitives.
+
+### Component 4 — `AuthSubmitButton`
+
+**Purpose:** Render the large, oval authentication CTA used in both mockups.
+
+The Login screen should be able to display `"SIGN IN"`. The Registration screen should be able to display `"SIGN UP"` or `"REGISTER"` using the same component.
+
+**Props:**
+
+- `label`: configurable button label.
+- `type`: `"button"`, `"submit"`, or `"reset"`.
+- `onClick`: optional callback.
+- `disabled`: optional boolean.
+- `loading`: optional boolean.
+- `loadingText`: optional loading label.
+- `className`: optional styling override.
+
+**Visual requirements**
+
+- Large oval or pill-shaped button.
+- Thin blue outline.
+- White or transparent background.
+- Dark text.
+- Centered label.
+- Configurable dimensions and padding through styling overrides.
+- Clear hover, active, focus-visible, disabled, and loading states.
+
+Use the existing shadcn `Button` primitive and customize its appearance to match the mockup.
+
+Support native button behavior. Respect the `type` prop and do not hardcode every CTA to submit.
+
+The component must not perform authentication, call APIs, navigate automatically, or contain application-specific business logic.
+
+### Component 5 — `AuthLink`
+
+**Purpose:** Render the reusable blue text links beneath authentication CTAs.
+
+Required examples:
+
+- `"Register here"`
+- `"Forgot username / password"`
+- `"Login"`
+
+**Props:**
+
+- `label`: displayed link text.
+- `href`: optional URL or application path.
+- `onClick`: optional click callback.
+- `className`: optional styling override.
+
+**Visual requirements**
+
+- Blue text.
+- Minimal decoration.
+- Suitable for inline placement inside supporting account-related text.
+- Visible keyboard-focus style.
+- No button-like background or border by default.
+
+Use semantic anchor elements for navigation. Do not use a fake `href="#"` when no destination has been supplied.
+
+Allow a suitable callback for non-navigation actions without converting every link into a button.
+
+Do not implement routing, account recovery, or registration logic.
+
+### Component 6 — `PasswordStrengthIndicator`
+
+**Purpose:** Display the compact password-strength meter shown toward the right side of the Registration password field.
+
+**Props:**
+
+- `strength`: one of `"empty"`, `"weak"`, `"medium"`, or `"strong"`.
+- `showLabel`: optional boolean controlling whether a strength label is shown.
+- `className`: optional styling override.
+
+The indicator must derive its visual state from the supplied `strength` prop. When a parent updates the prop, the rendered indicator must update accordingly.
+
+**Visual requirements**
+
+- Compact horizontal indicator.
+- Visually distinguish weak, medium, and strong states.
+- Use a neutral appearance when the strength is empty.
+- Fit into the password field's trailing region without obstructing entered text or making the field excessively tall.
+- Reuse the existing shadcn `Progress` primitive where appropriate.
+
+If the Progress primitive does not directly support the needed visual states, customize the indicator while preserving accessibility and avoiding unnecessary dependencies.
+
+Do not implement authentication, password storage, backend validation, or a separate password-security system.
+
+Do not claim that the meter guarantees password security.
+
+Keep the component independently reusable. It must not depend on `AuthField` or any page component.
+
+---
+
+## 5. Required reuse patterns
+
+The following table defines how the custom components must support the mockups. These are usage specifications, not permission to build the pages.
+
+| UI element | Reusable component | Configuration |
+|---|---|---|
+| Login Email | `AuthField` | `type="email"`, `layout="horizontal"` |
+| Login Password | `AuthField` | `type="password"`, `layout="horizontal"` |
+| Signup Email | `AuthField` | `type="email"`, `layout="stacked"` |
+| Signup Name | `AuthField` | `type="text"`, `layout="stacked"` |
+| Signup Phone | `AuthField` | `type="tel"`, `layout="stacked"` |
+| Signup Password | `AuthField` | `type="password"`, `layout="stacked"`, optional `endAdornment` |
+| Confirm Password | `AuthField` | `type="password"`, `layout="stacked"` |
+| Login CTA | `AuthSubmitButton` | `label="SIGN IN"` |
+| Registration CTA | `AuthSubmitButton` | Configurable registration label |
+| Register, Login, Forgot Password | `AuthLink` | Different `label` and `href` props |
+| Brand text | `BrandTitle` | Default or custom text |
+| Home CTA | `HomeButton` | Default or custom label |
+| Password meter | `PasswordStrengthIndicator` | Parent-provided strength state |
+
+Do not create a separate custom component for every field. Do not duplicate the two CTA implementations.
+
+Do not create a login component, signup component, form wrapper, page, or layout to demonstrate component usage.
+
+---
+
+## 6. Design system and visual fidelity
+
+Follow the attached reference screenshots rather than applying a generic authentication template.
+
+### Shared visual language
+
+- White background.
+- Blue accent color similar to the mockup.
+- Thin neutral borders.
+- Rounded rectangular inputs.
+- Pill-shaped, blue-outlined buttons.
+- Dark, readable labels and button text.
+- Minimal, clean typography.
+- No unnecessary gradients, shadows, icons, illustrations, glassmorphism, or decorative cards.
+
+### Login-specific styling
+
+- Email and Password use horizontal label placement.
+- Inputs have rounded rectangular borders.
+- The Sign In CTA has a noticeably larger oval shape.
+- Registration and password-recovery links use blue text.
+
+### Registration-specific styling
+
+- Labels sit above the inputs.
+- Email, Name, Phone, Password, and Confirm Password have consistent widths and vertical spacing.
+- The password-strength indicator fits inside the password field's trailing region.
+
+The mockup displays `"SIGN IN"` on both screens. Keep the CTA label configurable so the eventual Registration page can provide the correct label without creating another component.
+
+These are rough wireframes. Translate their design cues into clean, consistent UI primitives without adding a complete page layout.
+
+---
+
+## 7. Strict implementation boundaries
+
+**Build only the six custom reusable components and any missing shadcn primitives genuinely required by them.**
+
+Do not create or modify:
+
+- Login or registration pages.
+- Authentication page layouts.
+- A shared authentication layout wrapper.
+- A navigation bar or header container.
+- Login or registration form wrappers.
+- Application routes or router configuration.
+- Authentication contexts, services, APIs, or backend logic.
+- Application-level state management.
+- Demo pages or preview screens.
+- `App.jsx` merely to display these components.
+- Unrelated UI components or features.
+
+Do not reorganize the frontend directory or modify unrelated files.
+
+All six custom component files must be located inside:
+
+`frontend/src/components/ui/`
+
+Use the project's existing shared styling utility, such as `cn()`, if it exists. Do not create duplicate utilities or duplicate the shadcn primitives.
+
+### JSX-only enforcement
+
+- Write custom React components using JavaScript and JSX.
+- Use `.jsx` extensions for the six custom components.
+- Define component props through normal JavaScript destructuring and sensible defaults.
+- Use standard JavaScript for callbacks, conditionals, and component state when needed.
+- Do not add TypeScript interfaces or types.
+- Do not add `.tsx` implementations for the custom components.
+- Do not introduce a TypeScript migration, TypeScript configuration, or type-generation step.
+- Reuse existing shadcn source files regardless of their existing extensions if their exports are compatible; do not convert unrelated existing files to meet the new component naming requirements.
+
+---
+
+## 8. Validation and quality checklist
+
+Before declaring the task complete, verify the following:
+
+1. All six custom components exist as JSX files in the requested directory.
+2. All six components are independently importable.
+3. Their configurable props work rather than being ignored or hardcoded.
+4. `AuthField` supports horizontal and stacked layouts.
+5. Email, text, phone, and password inputs use the correct native types.
+6. Controlled input values update through `onChange`; uncontrolled inputs can use `defaultValue`.
+7. Password-strength visuals respond to changes in the `strength` prop.
+8. `endAdornment` renders without obstructing the input.
+9. Buttons support the appropriate type, disabled, and loading states.
+10. Links use supplied destinations and retain semantic correctness.
+11. Labels, inputs, and error messages are accessible.
+12. Styling overrides are supported through the specified class props.
+13. Existing shadcn source components and unrelated application code remain intact.
+14. No TypeScript files or type annotations have been introduced for the new custom components.
+15. No pages or application-level layouts have been created.
+
+Use the project's existing lint, development, and build scripts to check the implementation. Run only the checks supported by the existing JavaScript-based project configuration.
+
+Fix issues caused by the implementation. Do not modify unrelated code just to silence pre-existing errors.
+
+Do not create an application page to test the components. Use existing component-level tests and available project checks.
+
+---
+
+## 9. Final implementation report
+
+After completing the work, provide a concise report with:
+
+- The six custom component files created or updated.
+- The shadcn primitives reused or added.
+- The actual dependencies installed and why each was needed.
+- The key configurable props available on each custom component.
+- The checks executed and their actual results.
+- Any pre-existing project configuration issue that prevented a check from running.
+- Confirmation that the new custom components use JSX and JavaScript, with no new TypeScript implementation.
+
+Do not claim tests or builds passed unless you actually ran them.
+
+## Definition of done
+
+The task is complete when all six reusable JSX components exist inside `frontend/src/components/ui/`, their configurable props support the reference designs, their appearance matches the mockups, missing dependencies and required shadcn primitives are available, and the available project checks pass.
+
+**FINAL REMINDER: React JSX + JavaScript only. Components only. No pages, no form assembly, no application architecture, no duplicate implementations, and no unnecessary dependencies.**
