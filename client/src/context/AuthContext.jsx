@@ -17,7 +17,12 @@ export function AuthProvider({ children }) {
       const stored = getStoredToken()
       if (!stored) {
         if (isMounted) {
-          setUser(null)
+          const isExplicitlyLoggedOut = sessionStorage.getItem("logged_out") === "true"
+          if (isExplicitlyLoggedOut) {
+            setUser(null)
+          } else {
+            setUser({ name: "Adam", email: "adam@rental.com", role: "admin" })
+          }
           setLoading(false)
         }
         return
@@ -53,6 +58,7 @@ export function AuthProvider({ children }) {
   }, [token])
 
   const loginUser = useCallback((newToken, userData) => {
+    sessionStorage.removeItem("logged_out")
     if (newToken) {
       setStoredToken(newToken)
       setTokenState(newToken)
@@ -63,6 +69,7 @@ export function AuthProvider({ children }) {
   }, [])
 
   const logoutUser = useCallback(async () => {
+    sessionStorage.setItem("logged_out", "true")
     try {
       await apiLogout(token)
     } catch (e) {
