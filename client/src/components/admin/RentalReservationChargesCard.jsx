@@ -74,7 +74,7 @@ export function RentalReservationChargesCard({
       {/* Charge Rows */}
       <div className="space-y-3.5 pt-1">
         {chargeItems.map((item) => {
-          const val = charges[item.field] !== undefined ? charges[item.field] : item.defaultVal;
+          const val = charges[item.field] !== undefined ? charges[item.field] : "";
 
           return (
             <div

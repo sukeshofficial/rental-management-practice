@@ -15,26 +15,23 @@ import {
   X,
   LogOut,
   User,
-  Search,
-  Bell,
-  Sun,
-  Moon,
+  ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ModeToggle from "@/components/theme/mode-toggle";
-import { useTheme } from "@/components/theme/theme-provider";
 import { useAuth } from "@/context/AuthContext";
 
 /**
  * Reusable Admin Navigation Bar
- * Stays sticky at the top with a subtle backdrop blur.
- * Highlights the current active destination cleanly.
+ * Matches Reference Image 3 and Reference Image 1:
+ * - Active tab: blue border / pill style (e.g. Products)
+ * - User pill: Initial avatar, dynamically derived user display name or email, dropdown chevron
+ * - Real authenticated user session data
  */
 export function AdminNavbar({ activeTab: explicitActiveTab, className }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logoutUser } = useAuth();
-  const { theme, toggleTheme } = useTheme();
+  const { user, logoutUser, loading: isAuthLoading } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
@@ -66,7 +63,18 @@ export function AdminNavbar({ activeTab: explicitActiveTab, className }) {
     navigate("/login");
   };
 
-  const userName = user?.name || "Adam";
+  // Derive dynamic user details safely
+  const displayName = user?.name || (user?.email ? user.email.split("@")[0] : "User");
+  const displayEmail = user?.email || "";
+  const displayInitial = (displayName || "U").charAt(0).toUpperCase();
+
+  // RBAC checks
+  const isAdmin = user?.isAdmin === true || user?.role === "admin";
+  const canManageProducts =
+    isAdmin ||
+    user?.role === "internal_staff" ||
+    (Array.isArray(user?.permissions) &&
+      (user.permissions.includes("inventory.manage") || user.permissions.includes("*")));
 
   return (
     <header
@@ -79,11 +87,11 @@ export function AdminNavbar({ activeTab: explicitActiveTab, className }) {
         <div className="flex h-14 items-center justify-between gap-2">
           {/* Left section: Home icon + Navigation tabs */}
           <div className="flex items-center gap-1.5 sm:gap-2">
-            {/* Home button (black squircle icon) */}
+            {/* Home button (black squircle icon matching Reference 1 & 3) */}
             <Link
               to="/dashboard"
               aria-label="Admin Home"
-              className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+              className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
               <Home className="size-4" />
             </Link>
@@ -101,7 +109,7 @@ export function AdminNavbar({ activeTab: explicitActiveTab, className }) {
                     className={cn(
                       "inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs lg:text-sm font-medium transition-all select-none",
                       isActive
-                        ? "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 border border-indigo-200/70 dark:border-indigo-800/60 font-semibold shadow-xs"
+                        ? "bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-200/80 dark:border-blue-800/70 font-semibold shadow-2xs"
                         : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
                     )}
                   >
@@ -119,21 +127,25 @@ export function AdminNavbar({ activeTab: explicitActiveTab, className }) {
 
             {/* User Profile dropdown */}
             <div className="relative">
-              <button
-                type="button"
-                onClick={() => setProfileDropdownOpen((prev) => !prev)}
-                className="flex items-center gap-2 rounded-lg border border-border/70 bg-card px-2.5 py-1 text-xs font-medium text-foreground hover:bg-muted/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-                aria-expanded={profileDropdownOpen}
-                aria-haspopup="true"
-              >
-                <div className="flex size-6 shrink-0 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 font-bold text-[11px]">
-                  P
-                </div>
-                <span className="font-medium max-w-[100px] truncate">
-                  prithivi.code...
-                </span>
-                <ChevronDown className="size-3 text-muted-foreground opacity-70" />
-              </button>
+              {isAuthLoading ? (
+                <div className="h-8 w-28 animate-pulse rounded-lg bg-muted/60" />
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setProfileDropdownOpen((prev) => !prev)}
+                  className="flex items-center gap-2 rounded-lg border border-border/80 bg-card px-2.5 py-1 text-xs font-medium text-foreground hover:bg-muted/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer"
+                  aria-expanded={profileDropdownOpen}
+                  aria-haspopup="true"
+                >
+                  <div className="flex size-6 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-bold text-[11px]">
+                    {displayInitial}
+                  </div>
+                  <span className="font-medium max-w-[130px] truncate text-foreground">
+                    {displayName}
+                  </span>
+                  <ChevronDown className="size-3 text-muted-foreground opacity-70" />
+                </button>
+              )}
 
               {/* Profile dropdown menu */}
               {profileDropdownOpen && (
@@ -142,29 +154,46 @@ export function AdminNavbar({ activeTab: explicitActiveTab, className }) {
                     className="fixed inset-0 z-40"
                     onClick={() => setProfileDropdownOpen(false)}
                   />
-                  <div className="absolute right-0 mt-1.5 w-48 rounded-xl border border-border bg-card p-1.5 shadow-lg z-50 animate-in fade-in-50 zoom-in-95">
-                    <div className="px-2.5 py-2 border-b border-border/60">
-                      <p className="text-xs font-semibold text-foreground">{userName}</p>
-                      <p className="text-[11px] text-muted-foreground truncate">
-                        {user?.email || "adam@rental.com"}
-                      </p>
+                  <div className="absolute right-0 mt-1.5 w-56 rounded-xl border border-border bg-card p-1.5 shadow-lg z-50 animate-in fade-in-50 zoom-in-95">
+                    <div className="px-3 py-2 border-b border-border/60">
+                      <div className="flex items-center justify-between gap-1">
+                        <p className="text-xs font-semibold text-foreground truncate">{displayName}</p>
+                        {isAdmin && (
+                          <span className="inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 text-[10px] font-medium bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                            <ShieldCheck className="size-2.5" />
+                            Admin
+                          </span>
+                        )}
+                      </div>
+                      {displayEmail && (
+                        <p className="text-[11px] text-muted-foreground truncate mt-0.5">
+                          {displayEmail}
+                        </p>
+                      )}
+                      {user?.role && !isAdmin && (
+                        <p className="text-[10px] text-muted-foreground/80 capitalize mt-0.5">
+                          Role: {user.role.replace("_", " ")}
+                        </p>
+                      )}
                     </div>
                     <div className="pt-1">
-                      <Link
-                        to="/product"
-                        onClick={() => setProfileDropdownOpen(false)}
-                        className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-                      >
-                        <Package className="size-3.5" />
-                        <span>Manage Products</span>
-                      </Link>
+                      {canManageProducts && (
+                        <Link
+                          to="/product"
+                          onClick={() => setProfileDropdownOpen(false)}
+                          className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                        >
+                          <Package className="size-3.5" />
+                          <span>Manage Products</span>
+                        </Link>
+                      )}
                       <button
                         type="button"
                         onClick={() => {
                           setProfileDropdownOpen(false);
                           handleLogout();
                         }}
-                        className="w-full flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors text-left"
+                        className="w-full flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors text-left cursor-pointer"
                       >
                         <LogOut className="size-3.5" />
                         <span>Sign out</span>
@@ -201,7 +230,7 @@ export function AdminNavbar({ activeTab: explicitActiveTab, className }) {
                   className={cn(
                     "flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors",
                     isActive
-                      ? "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold"
+                      ? "bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-semibold"
                       : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   )}
                 >
