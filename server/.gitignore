@@ -24,3 +24,7 @@ dist-ssr
 *.sw?
 
 *.env
+
+# Staff provisioning — local templates with real staff definitions (never commit)
+scripts/staff.local.json
+scripts/staff.*.local.json

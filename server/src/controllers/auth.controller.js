@@ -95,7 +95,8 @@ export const logout = async (req, res) => {
 };
 
 /**
- * Get Current User (GET /api/auth/me)
+ * Get Current User (GET /api/v1/auth/me)
+ * Returns profile plus isAdmin flag derived from ADMIN_EMAILS whitelist.
  */
 export const getMe = async (req, res) => {
   try {
@@ -103,7 +104,13 @@ export const getMe = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      user: profile,
+      user: {
+        ...profile,
+        // isAdmin is set by authenticate middleware from ADMIN_EMAILS env whitelist.
+        // Never trust this value if supplied by the caller — it comes from req.user which
+        // was populated from the database and verified against the server-controlled whitelist.
+        isAdmin: req.user.isAdmin === true,
+      },
     });
   } catch (error) {
     return res.status(error.statusCode || 500).json({

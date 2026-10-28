@@ -13,6 +13,7 @@
     "nodemailer": "^10.2.1"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "eslint": "^10.13.0",
     "nodemon": "^3.1.14"
   },
@@ -21,6 +22,8 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "seed:staff": "node scripts/create-staff.js",
+    "create:staff": "node scripts/create-staff.js",
+    "test": "node --test tests/**/*.test.js",
     "lint": "eslint ."
   }
 }

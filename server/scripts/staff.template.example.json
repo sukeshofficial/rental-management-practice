@@ -1,0 +1,37 @@
+{
+  "staff": [
+    {
+      "name": "Operations Staff",
+      "email": "operations.staff@rental.example",
+      "phone": "+91 9876543210",
+      "role": "internal_staff",
+      "permissions": [
+        "rental.read",
+        "rental.operations"
+      ],
+      "passwordEnv": "OPERATIONS_STAFF_PASSWORD"
+    },
+    {
+      "name": "Inventory Manager",
+      "email": "inventory.manager@rental.example",
+      "phone": "+91 9876543211",
+      "role": "internal_staff",
+      "permissions": [
+        "inventory.read",
+        "inventory.manage"
+      ],
+      "passwordEnv": "INVENTORY_MANAGER_PASSWORD"
+    },
+    {
+      "name": "Support Staff",
+      "email": "support.staff@rental.example",
+      "phone": "+91 9876543212",
+      "role": "internal_staff",
+      "permissions": [
+        "support.read",
+        "support.manage"
+      ],
+      "passwordEnv": "SUPPORT_STAFF_PASSWORD"
+    }
+  ]
+}

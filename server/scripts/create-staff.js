@@ -1,133 +1,198 @@
+/**
+ * Staff Provisioning CLI — create-staff.js
+ *
+ * Usage:
+ *   npm run create:staff -- --file ./scripts/staff.template.json
+ *   npm run create:staff -- --file ./scripts/staff.template.json --update-profile
+ *   npm run create:staff -- --file ./scripts/staff.template.json --rotate-password
+ *   npm run create:staff -- --file ./scripts/staff.template.json --sync-permissions
+ *   npm run create:staff -- --file ./scripts/staff.template.json --reactivate
+ *
+ * The --file path must be a JSON file with a 'staff' array.
+ * Each entry may reference a password via 'passwordEnv' (name of env var holding the password).
+ * Never pass passwords as command-line arguments.
+ *
+ * Admin emails (ADMIN_EMAILS in .env) are NOT affected by this script.
+ * This script provisions only internal_staff accounts.
+ */
 
 import dotenv from "dotenv";
 dotenv.config();
 
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import connectDB from "../src/config/db.js";
-import User, { USER_ROLES, USER_STATUS } from "../src/models/user.model.js";
-import { generateToken } from "../src/services/auth.service.js";
+import mongoose from "mongoose";
+import {
+  validateStaffBatch,
+  provisionStaffBatch,
+} from "../src/services/staffProvisioning.service.js";
 
 /**
- * Remove control characters from values before writing them to logs.
- * This prevents newline-based log injection.
+ * Remove control characters from log values to prevent log injection.
  */
 const sanitizeLogValue = (value) =>
+  // eslint-disable-next-line no-control-regex
   String(value ?? "").replace(/[\u0000-\u001F\u007F]/g, "");
 
 /**
- * Helper to upsert a single staff member.
+ * Parse flags from process.argv
  */
-const upsertStaff = async ({ name, email, phone, password }) => {
-  const normalizedEmail = email.toLowerCase().trim();
+const parseArgs = (argv) => {
+  const args = argv.slice(2);
+  const flags = {
+    file: null,
+    updateProfile: false,
+    rotatePassword: false,
+    syncPermissions: false,
+    changeRole: false,
+    reactivate: false,
+  };
 
-  let staff = await User.findOne({ email: normalizedEmail });
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (arg === "--file" && args[i + 1]) {
+      flags.file = args[i + 1];
+      i++;
+    } else if (arg === "--update-profile") {
+      flags.updateProfile = true;
+    } else if (arg === "--rotate-password") {
+      flags.rotatePassword = true;
+    } else if (arg === "--sync-permissions") {
+      flags.syncPermissions = true;
+    } else if (arg === "--change-role") {
+      flags.changeRole = true;
+    } else if (arg === "--reactivate") {
+      flags.reactivate = true;
+    }
+  }
 
-  if (staff) {
-    staff.name = name;
-    staff.phone = phone;
-    staff.role = USER_ROLES.INTERNAL_STAFF;
-    staff.status = USER_STATUS.ACTIVE;
-    staff.password = password;
+  return flags;
+};
 
-    // The model's pre-save hook is expected to hash modified passwords.
-    await staff.save();
+/**
+ * Load and parse JSON staff template from file.
+ */
+const loadTemplateFile = (filePath) => {
+  const absolutePath = resolve(filePath);
+  let raw;
+  try {
+    raw = readFileSync(absolutePath, "utf-8");
+  } catch (err) {
+    throw new Error(`Cannot read file '${absolutePath}': ${err.message}`);
+  }
 
-    console.log(
-      `Updated existing internal_staff account: ${sanitizeLogValue(normalizedEmail)}`
-    );
-  } else {
-    staff = new User({
-      name,
-      email: normalizedEmail,
-      phone,
-      password,
-      role: USER_ROLES.INTERNAL_STAFF,
-      status: USER_STATUS.ACTIVE,
-    });
+  let parsed;
+  try {
+    parsed = JSON.parse(raw);
+  } catch (parseErr) {
+    throw new Error(`Invalid JSON in file '${absolutePath}'`, { cause: parseErr });
+  }
 
-    await staff.save();
-
-    console.log(
-      `Created new internal_staff account: ${sanitizeLogValue(normalizedEmail)}`
+  if (!parsed || !Array.isArray(parsed.staff)) {
+    throw new Error(
+      `Template file must have a top-level 'staff' array. Example: { "staff": [ ... ] }`
     );
   }
 
-  // Preserve token generation for compatibility with the existing workflow.
-  // Never print the token or password to the console.
-  const token = generateToken(staff);
-
-  return { staff, token };
+  return parsed.staff;
 };
 
-// Usage:
-// node create-staff.js <email> <password> [name] [phone]
+/**
+ * Main execution
+ */
+const run = async () => {
+  const flags = parseArgs(process.argv);
 
-const args = process.argv.slice(2);
+  if (!flags.file) {
+    console.error(
+      "Error: --file <path> is required.\n" +
+        "Usage: npm run create:staff -- --file ./scripts/staff.template.json\n" +
+        "Optional flags: --update-profile --rotate-password --sync-permissions --change-role --reactivate"
+    );
+    process.exitCode = 1;
+    return;
+  }
 
-let staffList = [];
+  let rawStaffList;
+  try {
+    rawStaffList = loadTemplateFile(flags.file);
+  } catch (err) {
+    console.error(`Failed to load template: ${sanitizeLogValue(err.message)}`);
+    process.exitCode = 1;
+    return;
+  }
 
-if (args.length >= 2) {
-  const [
-    email,
-    password,
-    name = "Staff Member",
-    phone = "+1 555-0100",
-  ] = args;
+  // Connect to MongoDB using the existing application database configuration
+  try {
+    await connectDB();
+  } catch (err) {
+    console.error(`Database connection failed: ${sanitizeLogValue(err.message)}`);
+    process.exitCode = 1;
+    return;
+  }
 
-  staffList = [{ email, password, name, phone }];
-} else {
-  staffList = [
-    {
-      name: "Operations Staff",
-      email: "operations.staff@rental.internal",
-      phone: "+1 555-8801",
-      password: "StaffSecurePassword123!",
-    },
-    {
-      name: "Inventory Manager",
-      email: "inventory.staff@rental.internal",
-      phone: "+1 555-8802",
-      password: "StaffSecurePassword123!",
-    },
-    {
-      name: "Support Staff",
-      email: "support.staff@rental.internal",
-      phone: "+1 555-8803",
-      password: "StaffSecurePassword123!",
-    },
-  ];
-}
+  try {
+    // Preflight: validate entire batch (resolves passwordEnv from process.env)
+    // This throws before any DB write if any record is invalid.
+    console.log(`\nRunning preflight validation on ${rawStaffList.length} staff record(s)...`);
+    let validatedStaff;
+    try {
+      validatedStaff = validateStaffBatch(rawStaffList, { allowPasswordEnvResolution: true });
+    } catch (err) {
+      console.error(`Preflight validation failed: ${sanitizeLogValue(err.message)}`);
+      console.error("No database changes were made.");
+      process.exitCode = 1;
+      return;
+    }
 
-try {
-  await connectDB();
+    console.log(`Preflight validation passed. Provisioning ${validatedStaff.length} account(s)...`);
 
-  console.log(
-    `Provisioning ${staffList.length} staff account(s)...`
-  );
+    // Provision batch
+    const summary = await provisionStaffBatch(validatedStaff, {
+      updateProfile: flags.updateProfile,
+      rotatePassword: flags.rotatePassword,
+      syncPermissions: flags.syncPermissions,
+      changeRole: flags.changeRole,
+      reactivate: flags.reactivate,
+    });
 
-  // Promise.all preserves the original result ordering.
-  const results = await Promise.all(
-    staffList.map((member) => upsertStaff(member))
-  );
+    console.log("\n========================================");
+    console.log("  Staff Provisioning Complete");
+    console.log("========================================");
+    console.log(`  Total processed : ${summary.total}`);
+    console.log(`  Created         : ${summary.created}`);
+    console.log(`  Updated         : ${summary.updated}`);
+    console.log(`  Unchanged       : ${summary.unchanged}`);
+    console.log("----------------------------------------");
 
-  console.log("\nStaff provisioning completed:");
+    summary.results.forEach((result, i) => {
+      const actionLabel = {
+        created: "✅ CREATED  ",
+        updated: "🔄 UPDATED  ",
+        unchanged: "⏭  UNCHANGED",
+      }[result.action] || result.action;
 
-  results.forEach(({ staff }, index) => {
-    console.log(`\nStaff member #${index + 1}`);
-    console.log(`Name:  ${sanitizeLogValue(staff.name)}`);
-    console.log(`Email: ${sanitizeLogValue(staff.email)}`);
-    console.log(`Role:  ${sanitizeLogValue(staff.role)}`);
-    console.log("Password: [REDACTED]");
-    console.log("Authentication token: [REDACTED]");
-  });
+      console.log(
+        `  ${i + 1}. ${actionLabel}  ${sanitizeLogValue(result.email)}` +
+          `  [${sanitizeLogValue(result.role)}]` +
+          `  status: ${sanitizeLogValue(result.status)}`
+      );
+    });
 
-  console.log("\nAll staff accounts processed successfully.");
-  process.exitCode = 0;
-} catch (error) {
-  // Avoid logging raw error objects that could contain sensitive data.
-  console.error(
-    "Failed to provision staff:",
-    sanitizeLogValue(error?.message || "An unexpected error occurred")
-  );
+    console.log("========================================\n");
+    process.exitCode = 0;
+  } catch (err) {
+    console.error(`Provisioning failed: ${sanitizeLogValue(err.message)}`);
+    process.exitCode = 1;
+  } finally {
+    // Always close the database connection cleanly
+    try {
+      await mongoose.disconnect();
+    } catch {
+      // Ignore disconnect errors
+    }
+  }
+};
 
-  process.exitCode = 1;
-}
+run();

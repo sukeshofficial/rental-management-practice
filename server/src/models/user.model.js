@@ -5,6 +5,7 @@ export const USER_ROLES = {
   CUSTOMER: "customer",
   END_USER: "end_user",
   INTERNAL_STAFF: "internal_staff",
+  ADMIN: "admin",
 };
 
 export const USER_STATUS = {
@@ -69,6 +70,10 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    permissions: {
+      type: [String],
+      default: [],
+    },
     passwordResetToken: {
       type: String,
       select: false,
@@ -118,6 +123,7 @@ userSchema.methods.toSafeObject = function () {
     phone: this.phone,
     role: this.role,
     status: this.status,
+    permissions: this.permissions || [],
     emailVerified: this.emailVerified,
     createdAt: this.createdAt,
     updatedAt: this.updatedAt,
