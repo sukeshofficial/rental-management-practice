@@ -96,7 +96,7 @@ export const QUICK_ACTIONS = [
     description: "New rental booking",
     to: "/rental",
     icon: "CalendarPlus",
-    color: "indigo",
+    color: "blue",
   },
   {
     id: "view-all-orders",

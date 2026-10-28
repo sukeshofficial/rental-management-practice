@@ -66,11 +66,10 @@ export default function RentalOrdersPage() {
         const isActive = row.status === "Active";
         return (
           <span
-            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold border ${
-              isActive
+            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold border ${isActive
                 ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border-emerald-200/80 dark:border-emerald-800/60"
                 : "bg-muted/70 text-muted-foreground border-border/80"
-            }`}
+              }`}
           >
             {isActive ? (
               <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -95,7 +94,7 @@ export default function RentalOrdersPage() {
           actions={
             <Link
               to="/product"
-              className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-xs hover:bg-indigo-700 transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors"
             >
               <Plus className="size-4" />
               <span>Browse Products for Booking</span>
@@ -121,7 +120,7 @@ export default function RentalOrdersPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search rentals..."
-                className="h-8 w-full rounded-lg border border-input bg-background dark:bg-input/30 pl-8 pr-3 text-xs sm:text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                className="h-8 w-full rounded-lg border border-input bg-background dark:bg-input/30 pl-8 pr-3 text-xs sm:text-sm outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               />
             </div>
           </div>

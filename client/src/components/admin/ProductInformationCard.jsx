@@ -142,15 +142,15 @@ export function ProductInformationCard({
               {/* Left: Drag & Drop upload container */}
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className="col-span-12 sm:col-span-8 flex flex-col items-center justify-center p-6 border-2 border-dashed border-border/80 rounded-xl bg-muted/10 hover:bg-muted/20 hover:border-indigo-400 dark:hover:border-indigo-600 transition-colors cursor-pointer text-center min-h-[140px]"
+                className="col-span-12 sm:col-span-8 flex flex-col items-center justify-center p-6 border-2 border-dashed border-border/80 rounded-xl bg-muted/10 hover:bg-muted/20 hover:border-blue-400 dark:hover:border-blue-600 transition-colors cursor-pointer text-center min-h-[140px]"
               >
-                <div className="size-9 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-2 shadow-2xs">
+                <div className="size-9 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-2 shadow-2xs">
                   <UploadCloud className="size-5" />
                 </div>
                 <p className="text-xs font-semibold text-foreground">
                   Drag & drop images here
                 </p>
-                <p className="text-[11px] text-indigo-600 dark:text-indigo-400 font-medium">
+                <p className="text-[11px] text-blue-600 dark:text-blue-400 font-medium">
                   or click to browse
                 </p>
                 <span className="text-[10px] text-muted-foreground mt-1">
@@ -177,7 +177,7 @@ export function ProductInformationCard({
                       className={cn(
                         "relative size-14 sm:w-full sm:h-12 rounded-lg border bg-muted/20 p-1 shrink-0 overflow-visible cursor-pointer transition-all",
                         activeImageIdx === idx
-                          ? "border-2 border-indigo-600 shadow-2xs"
+                          ? "border-2 border-blue-600 shadow-2xs"
                           : "border-border/80 hover:border-border"
                       )}
                     >
@@ -202,7 +202,7 @@ export function ProductInformationCard({
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-full inline-flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg border border-dashed border-border/80 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50/30 dark:hover:bg-indigo-950/20 transition-colors cursor-pointer shrink-0"
+                  className="w-full inline-flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg border border-dashed border-border/80 text-[11px] font-semibold text-blue-600 dark:text-blue-400 hover:bg-blue-50/30 dark:hover:bg-blue-950/20 transition-colors cursor-pointer shrink-0"
                 >
                   <Plus className="size-3" />
                   <span>Add more</span>
@@ -231,7 +231,7 @@ export function ProductInformationCard({
                 onChange={(e) => handleFieldChange("name", e.target.value)}
                 className={cn(
                   "h-9 w-full rounded-lg border bg-background dark:bg-input/30 pl-9 pr-3 text-xs sm:text-sm font-medium outline-none transition-colors",
-                  "focus-visible:border-indigo-500 focus-visible:ring-1 focus-visible:ring-indigo-500",
+                  "focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500",
                   errors.name
                     ? "border-rose-500 ring-1 ring-rose-500"
                     : "border-border/90"
@@ -267,7 +267,7 @@ export function ProductInformationCard({
                 }}
                 className={cn(
                   "h-9 w-full rounded-lg border bg-background dark:bg-input/30 pl-8 pr-3 text-xs sm:text-sm font-medium outline-none transition-colors",
-                  "focus-visible:border-indigo-500 focus-visible:ring-1 focus-visible:ring-indigo-500",
+                  "focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500",
                   errors.price
                     ? "border-rose-500 ring-1 ring-rose-500"
                     : "border-border/90"
@@ -326,7 +326,7 @@ export function ProductInformationCard({
               placeholder="Provide a detailed description of the product..."
               value={product.description ?? ""}
               onChange={(e) => handleFieldChange("description", e.target.value)}
-              className="w-full rounded-lg border border-border/90 bg-background dark:bg-input/30 p-2.5 text-xs sm:text-sm font-medium outline-none transition-colors focus-visible:border-indigo-500 focus-visible:ring-1 focus-visible:ring-indigo-500 resize-none"
+              className="w-full rounded-lg border border-border/90 bg-background dark:bg-input/30 p-2.5 text-xs sm:text-sm font-medium outline-none transition-colors focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500 resize-none"
             />
             <div className="text-right">
               <span className="text-[11px] text-muted-foreground">
@@ -406,7 +406,7 @@ export function ProductInformationCard({
                 className={cn(
                   "relative aspect-square rounded-lg border bg-muted/10 p-1 overflow-hidden transition-all",
                   activeImageIdx === idx
-                    ? "border-2 border-indigo-600 ring-2 ring-indigo-500/20 shadow-xs"
+                    ? "border-2 border-blue-600 ring-2 ring-blue-500/20 shadow-xs"
                     : "border-border/80 hover:border-border"
                 )}
               >

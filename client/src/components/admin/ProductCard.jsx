@@ -69,7 +69,7 @@ export function ProductCard({
       )}
     >
       {/* Product Image Area */}
-      <div className="relative aspect-4/3 w-full bg-neutral-50 dark:bg-neutral-900/40 border-b border-border/60 flex items-center justify-center p-5 overflow-hidden">
+      <div className="relative aspect-4/3 w-full bg-neutral-50 dark:bg-neutral-900/40 border-b border-border/60 flex items-center justify-center p-0 overflow-hidden">
         {/* Context Menu Button */}
         <div
           className="absolute top-2.5 right-2.5 z-10"
@@ -141,7 +141,7 @@ export function ProductCard({
             src={image}
             alt={name}
             onError={() => setImageError(true)}
-            className="size-full object-contain object-center transition-transform duration-300 group-hover:scale-105"
+            className="size-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
             loading="lazy"
           />
         ) : (

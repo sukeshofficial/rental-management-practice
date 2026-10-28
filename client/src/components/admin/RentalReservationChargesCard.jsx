@@ -100,7 +100,7 @@ export function RentalReservationChargesCard({
                       placeholder="0"
                       value={val === 0 && val !== "" ? 0 : val ?? ""}
                       onChange={(e) => handleChargeChange(item.field, e.target.value)}
-                      className="h-8 w-full rounded-lg border border-border/90 bg-background dark:bg-input/30 pl-6 pr-2.5 text-xs font-semibold text-foreground outline-none focus-visible:border-indigo-500 focus-visible:ring-1 focus-visible:ring-indigo-500"
+                      className="h-8 w-full rounded-lg border border-border/90 bg-background dark:bg-input/30 pl-6 pr-2.5 text-xs font-semibold text-foreground outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500"
                     />
                   </div>
                 ) : (

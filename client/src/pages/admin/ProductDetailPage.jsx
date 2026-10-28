@@ -59,9 +59,9 @@ export default function ProductDetailPage() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
   // Accordion collapsed/expanded states (matching Reference 1)
-  const [rentalPricingOpen, setRentalPricingOpen] = useState(true);
-  const [additionalChargesOpen, setAdditionalChargesOpen] = useState(true);
-  const [productDetailsOpen, setProductDetailsOpen] = useState(true);
+  const [rentalPricingOpen, setRentalPricingOpen] = useState(false);
+  const [additionalChargesOpen, setAdditionalChargesOpen] = useState(false);
+  const [productDetailsOpen, setProductDetailsOpen] = useState(false);
   const [descriptionOpen, setDescriptionOpen] = useState(false);
 
   // Actions dropdown menu state
@@ -244,14 +244,14 @@ export default function ProductDetailPage() {
 
             {/* Top Right Actions: Back to Products, More Actions, Edit Product */}
             <div className="flex items-center gap-2 shrink-0 self-start sm:self-center">
-              <button
+              {/* <button
                 type="button"
                 onClick={() => navigate("/product")}
                 className="inline-flex items-center gap-1.5 rounded-xl border border-border/80 bg-card px-3.5 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors shadow-2xs cursor-pointer"
               >
                 <ArrowLeft className="size-3.5" />
                 <span>Back to Products</span>
-              </button>
+              </button> */}
 
               {/* More Actions Dropdown */}
               <div className="relative">
@@ -317,12 +317,12 @@ export default function ProductDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* ──────────────── COLUMN 1: Product Gallery (Col-span-4) ──────────────── */}
           <div className="lg:col-span-4 space-y-3">
-            <div className="relative rounded-2xl border border-border/80 bg-neutral-50 dark:bg-neutral-900/40 overflow-hidden p-6 aspect-square flex items-center justify-center group shadow-2xs">
+            <div className="relative rounded-2xl border border-border/80 bg-neutral-50 dark:bg-neutral-900/40 overflow-hidden p-0 aspect-square flex items-center justify-center group shadow-2xs">
               {currentPrimaryImage ? (
                 <img
                   src={currentPrimaryImage}
                   alt={name}
-                  className="size-full object-contain object-center transition-transform duration-300 group-hover:scale-102"
+                  className="size-full object-cover rounded-none transition-transform duration-300 group-hover:scale-102"
                 />
               ) : (
                 <div className="flex flex-col items-center justify-center text-muted-foreground">
@@ -368,7 +368,7 @@ export default function ProductDetailPage() {
 
             {/* Thumbnail Strip */}
             {galleryImages.length > 1 && (
-              <div className="flex items-center gap-2.5 overflow-x-auto pb-1">
+              <div className="flex items-center gap-2.5 overflow-x-auto pt-1 pb-1">
                 {galleryImages.slice(0, 4).map((url, idx) => {
                   const isSelected = selectedImageIndex === idx;
                   return (
@@ -383,7 +383,7 @@ export default function ProductDetailPage() {
                           : "border-border/80 hover:border-border"
                       )}
                     >
-                      <img src={url} alt={`Thumbnail ${idx + 1}`} className="size-full object-contain" />
+                      <img src={url} alt={`Thumbnail ${idx + 1}`} className="size-full object-cover rounded-lg" />
                     </button>
                   );
                 })}
@@ -399,7 +399,7 @@ export default function ProductDetailPage() {
           </div>
 
           {/* ───────────── COLUMN 2: Product Information Panels (Col-span-5) ───────────── */}
-          <div className="lg:col-span-5 space-y-4">
+          <div className="lg:col-span-5 space-y-4 max-h-[calc(95vh-12rem)] overflow-y-auto pr-1.5 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
             {/* Overview Panel (Matching Reference Image 1) */}
             <div className="rounded-2xl border border-border/80 bg-card p-5 shadow-2xs space-y-4">
               <div className="flex items-center justify-between">
@@ -638,28 +638,6 @@ export default function ProductDetailPage() {
 
           {/* ───────────── COLUMN 3: Right Side Panel Actions & Specs (Col-span-3) ───────────── */}
           <div className="lg:col-span-3 space-y-4">
-            {/* Primary Action Button 1: Preview Customer View */}
-            <button
-              type="button"
-              onClick={() => alert(`Previewing customer listing for: ${name}`)}
-              className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-2xs hover:bg-blue-700 transition-colors cursor-pointer"
-            >
-              <ExternalLink className="size-4" />
-              <span>Preview Customer View</span>
-            </button>
-
-            {/* Secondary Action Button 2: Duplicate Product */}
-            {canEdit && (
-              <button
-                type="button"
-                onClick={handleDuplicate}
-                className="w-full flex items-center justify-center gap-2 rounded-xl border border-border/80 bg-card px-4 py-2 text-xs sm:text-sm font-semibold text-foreground hover:bg-muted transition-colors shadow-2xs cursor-pointer"
-              >
-                <Copy className="size-3.5 text-muted-foreground" />
-                <span>Duplicate Product</span>
-              </button>
-            )}
-
             {/* Product Specifications Table Panel (Matching Reference 1 Right Card) */}
             <div className="rounded-2xl border border-border/80 bg-card p-4 shadow-2xs space-y-3">
               <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
@@ -712,6 +690,27 @@ export default function ProductDetailPage() {
                 </div>
               </div>
             </div>
+            {/* Primary Action Button 1: Preview Customer View */}
+            <button
+              type="button"
+              onClick={() => alert(`Previewing customer listing for: ${name}`)}
+              className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-2xs hover:bg-blue-700 transition-colors cursor-pointer"
+            >
+              <ExternalLink className="size-4" />
+              <span>Preview Customer View</span>
+            </button>
+
+            {/* Secondary Action Button 2: Duplicate Product */}
+            {canEdit && (
+              <button
+                type="button"
+                onClick={handleDuplicate}
+                className="w-full flex items-center justify-center gap-2 rounded-xl border border-border/80 bg-card px-4 py-2 text-xs sm:text-sm font-semibold text-foreground hover:bg-muted transition-colors shadow-2xs cursor-pointer"
+              >
+                <Copy className="size-3.5 text-muted-foreground" />
+                <span>Duplicate Product</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -742,12 +741,12 @@ export default function ProductDetailPage() {
                   onClick={() => navigate(`/product/${rel.id}`)}
                   className="group rounded-2xl border border-border/80 bg-card overflow-hidden shadow-2xs hover:border-blue-400 hover:shadow-md transition-all cursor-pointer flex flex-col"
                 >
-                  <div className="aspect-4/3 bg-neutral-50 dark:bg-neutral-900/40 border-b border-border/60 p-4 flex items-center justify-center overflow-hidden">
+                  <div className="aspect-4/3 bg-neutral-50 dark:bg-neutral-900/40 border-b border-border/60 p-0 flex items-center justify-center overflow-hidden">
                     {rel.image ? (
                       <img
                         src={rel.image}
                         alt={rel.name}
-                        className="size-full object-contain transition-transform duration-300 group-hover:scale-105"
+                        className="size-full object-cover rounded-none transition-transform duration-300 group-hover:scale-102"
                       />
                     ) : (
                       <Package className="size-8 text-muted-foreground" />

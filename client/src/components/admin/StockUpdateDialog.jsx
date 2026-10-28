@@ -78,12 +78,12 @@ export function StockUpdateDialog({
               min="0"
               value={quantity}
               onChange={(e) => setQuantity(Math.max(0, parseInt(e.target.value) || 0))}
-              className="h-9 w-full rounded-lg border border-input bg-background dark:bg-input/30 px-3 py-1 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+              className="h-9 w-full rounded-lg border border-input bg-background dark:bg-input/30 px-3 py-1 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             />
           </div>
 
           <div className="rounded-lg bg-muted/40 p-2.5 text-[11px] text-muted-foreground flex gap-2 items-start">
-            <AlertCircle className="size-3.5 text-indigo-500 shrink-0 mt-0.5" />
+            <AlertCircle className="size-3.5 text-blue-500 shrink-0 mt-0.5" />
             <span>
               Note: This is an administrative preview. Stock counts are maintained via the Rental Warehouse & Orders service.
             </span>
@@ -107,7 +107,7 @@ export function StockUpdateDialog({
             <Button
               type="submit"
               size="sm"
-              className="bg-indigo-600 hover:bg-indigo-700 text-white"
+              className="bg-blue-600 hover:bg-blue-700 text-white"
             >
               Apply Change
             </Button>

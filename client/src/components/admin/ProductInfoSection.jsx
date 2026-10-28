@@ -33,8 +33,8 @@ export function ProductInfoSection({
     typeof product.price === "number"
       ? `₹ ${product.price.toLocaleString("en-IN")}`
       : product.price
-      ? `₹ ${product.price}`
-      : "₹ 0";
+        ? `₹ ${product.price}`
+        : "₹ 0";
 
   return (
     <div
@@ -55,8 +55,8 @@ export function ProductInfoSection({
               htmlFor="product-image-upload"
               className={cn(
                 "relative flex flex-col items-center justify-center aspect-square w-full rounded-xl border-2 border-dashed border-border/80 bg-muted/20 p-4 text-center cursor-pointer transition-all",
-                "hover:border-indigo-400 hover:bg-indigo-50/20 dark:hover:border-indigo-600 dark:hover:bg-indigo-950/20",
-                "focus-within:ring-2 focus-within:ring-indigo-500"
+                "hover:border-blue-400 hover:bg-blue-50/20 dark:hover:border-blue-600 dark:hover:bg-blue-950/20",
+                "focus-within:ring-2 focus-within:ring-blue-500"
               )}
             >
               {product.imagePreview || (product.image && !imageFailed) ? (
@@ -128,7 +128,7 @@ export function ProductInfoSection({
                 placeholder="Or paste image URL"
                 value={product.image || ""}
                 onChange={(e) => handleFieldChange("image", e.target.value)}
-                className="w-full text-[11px] text-muted-foreground bg-transparent border border-border/70 rounded-md px-2 py-1 outline-none focus:border-indigo-500"
+                className="w-full text-[11px] text-muted-foreground bg-transparent border border-border/70 rounded-md px-2 py-1 outline-none focus:border-blue-500"
               />
             </div>
           )}

@@ -133,7 +133,7 @@ export function ProductPreviewCard({
               type="button"
               onClick={handlePrev}
               aria-label="Previous image"
-              className="absolute left-2.5 top-1/2 -translate-y-1/2 size-7 rounded-full bg-white/95 dark:bg-card/95 text-foreground shadow-md hover:bg-white dark:hover:bg-card flex items-center justify-center transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 size-7 rounded-full bg-white/95 dark:bg-card/95 text-foreground shadow-md hover:bg-white dark:hover:bg-card flex items-center justify-center transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
               <ChevronLeft className="size-4" />
             </button>
@@ -145,7 +145,7 @@ export function ProductPreviewCard({
               type="button"
               onClick={handleNext}
               aria-label="Next image"
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 size-7 rounded-full bg-white/95 dark:bg-card/95 text-foreground shadow-md hover:bg-white dark:hover:bg-card flex items-center justify-center transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 size-7 rounded-full bg-white/95 dark:bg-card/95 text-foreground shadow-md hover:bg-white dark:hover:bg-card flex items-center justify-center transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
               <ChevronRight className="size-4" />
             </button>
@@ -160,7 +160,7 @@ export function ProductPreviewCard({
               type="button"
               onClick={() => setIsFullscreen(true)}
               aria-label="Expand image"
-              className="size-6 rounded-md bg-white/90 dark:bg-card/90 text-foreground shadow-xs hover:bg-white dark:hover:bg-card flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+              className="size-6 rounded-md bg-white/90 dark:bg-card/90 text-foreground shadow-xs hover:bg-white dark:hover:bg-card flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
               <Maximize2 className="size-3.5" />
             </button>
@@ -172,14 +172,14 @@ export function ProductPreviewCard({
           <h4 className="text-base sm:text-lg font-bold text-foreground tracking-tight truncate">
             {productName}
           </h4>
-          <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/60 px-2.5 py-0.5 text-[11px] font-medium shrink-0">
-            <span className="size-1.5 rounded-full bg-indigo-600 dark:bg-indigo-400" />
+          <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/60 px-2.5 py-0.5 text-[11px] font-medium shrink-0">
+            <span className="size-1.5 rounded-full bg-blue-600 dark:bg-blue-400" />
             {status}
           </span>
         </div>
 
         {/* Base Price in Rupees */}
-        <div className="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400 tracking-tight">
+        <div className="text-2xl font-extrabold text-blue-600 dark:text-blue-400 tracking-tight">
           ₹ {basePrice}
         </div>
 

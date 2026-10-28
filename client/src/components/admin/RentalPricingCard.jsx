@@ -134,7 +134,7 @@ export function RentalPricingCard({
                           onChange={(e) =>
                             handleRowChange(rule.id, "price", e.target.value)
                           }
-                          className="h-8 w-full rounded-lg border border-border/90 bg-background dark:bg-input/30 pl-6 pr-2 text-xs font-semibold text-foreground outline-none focus-visible:border-indigo-500 focus-visible:ring-1 focus-visible:ring-indigo-500"
+                          className="h-8 w-full rounded-lg border border-border/90 bg-background dark:bg-input/30 pl-6 pr-2 text-xs font-semibold text-foreground outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500"
                         />
                       </div>
                     ) : (
@@ -179,7 +179,7 @@ export function RentalPricingCard({
         <button
           type="button"
           onClick={onAddRule}
-          className="w-full rounded-xl border border-dashed border-indigo-200 dark:border-indigo-800/80 bg-indigo-50/40 dark:bg-indigo-950/20 py-2.5 px-3 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100/50 dark:hover:bg-indigo-900/30 transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+          className="w-full rounded-xl border border-dashed border-blue-200 dark:border-blue-800/80 bg-blue-50/40 dark:bg-blue-950/20 py-2.5 px-3 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:bg-blue-100/50 dark:hover:bg-blue-900/30 transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
         >
           <Plus className="size-3.5" />
           <span>Add Pricing Rule</span>

@@ -47,7 +47,7 @@ export function PageToolbar({
           <button
             type="button"
             onClick={handleCreate}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-indigo-200/90 dark:border-indigo-800/80 bg-indigo-50/70 dark:bg-indigo-950/40 px-3 py-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors shadow-2xs"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-blue-200/90 dark:border-blue-800/80 bg-blue-50/70 dark:bg-blue-950/40 px-3 py-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors shadow-2xs"
           >
             <Plus className="size-3.5" />
             <span>{createLabel}</span>

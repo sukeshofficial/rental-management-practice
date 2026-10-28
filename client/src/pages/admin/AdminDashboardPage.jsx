@@ -84,11 +84,10 @@ export default function AdminDashboardPage() {
         const isActive = row.status === "Active";
         return (
           <span
-            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold border ${
-              isActive
+            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold border ${isActive
                 ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border-emerald-200/80 dark:border-emerald-800/60"
                 : "bg-muted/70 text-muted-foreground border-border/80"
-            }`}
+              }`}
           >
             {isActive ? (
               <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -118,7 +117,7 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => setDateRangeOpen((prev) => !prev)}
-                className="flex items-center gap-2 rounded-lg border border-border/80 bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted/50 transition-colors shadow-2xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                className="flex items-center gap-2 rounded-lg border border-border/80 bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted/50 transition-colors shadow-2xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                 aria-expanded={dateRangeOpen}
               >
                 <Calendar className="size-3.5 text-muted-foreground" />
@@ -144,11 +143,10 @@ export default function AdminDashboardPage() {
                           setSelectedRange(opt);
                           setDateRangeOpen(false);
                         }}
-                        className={`w-full text-left rounded-lg px-2.5 py-1.5 text-xs transition-colors ${
-                          selectedRange === opt
-                            ? "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold"
+                        className={`w-full text-left rounded-lg px-2.5 py-1.5 text-xs transition-colors ${selectedRange === opt
+                            ? "bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-semibold"
                             : "text-foreground hover:bg-muted"
-                        }`}
+                          }`}
                       >
                         {opt}
                       </button>
@@ -162,7 +160,7 @@ export default function AdminDashboardPage() {
 
         {/* Demo banner note */}
         {notification && (
-          <div className="rounded-xl border border-indigo-200 dark:border-indigo-900 bg-indigo-50/60 dark:bg-indigo-950/30 p-3 text-xs text-indigo-700 dark:text-indigo-300 flex items-center justify-between animate-in fade-in">
+          <div className="rounded-xl border border-blue-200 dark:border-blue-900 bg-blue-50/60 dark:bg-blue-950/30 p-3 text-xs text-blue-700 dark:text-blue-300 flex items-center justify-between animate-in fade-in">
             <span>{notification}</span>
             <button
               onClick={() => setNotification("")}
@@ -203,7 +201,7 @@ export default function AdminDashboardPage() {
               </h2>
               <Link
                 to="/rental"
-                className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline"
+                className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline"
               >
                 View all
               </Link>
@@ -234,14 +232,14 @@ export default function AdminDashboardPage() {
                         setNotification("Demonstration Report: Total revenue this month is ₹48,250 across 86 orders.");
                       }
                     }}
-                    className="group flex items-center justify-between rounded-xl border border-border/80 bg-card p-3.5 shadow-2xs transition-all hover:border-indigo-300 dark:hover:border-indigo-700 hover:shadow-xs"
+                    className="group flex items-center justify-between rounded-xl border border-border/80 bg-card p-3.5 shadow-2xs transition-all hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-xs"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 group-hover:scale-105 transition-transform">
+                      <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 group-hover:scale-105 transition-transform">
                         <Icon className="size-4" />
                       </div>
                       <div>
-                        <h3 className="text-xs sm:text-sm font-semibold text-foreground group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                        <h3 className="text-xs sm:text-sm font-semibold text-foreground group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                           {action.title}
                         </h3>
                         <p className="text-[11px] text-muted-foreground">

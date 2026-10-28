@@ -356,7 +356,7 @@ export default function ProductsOverviewPage() {
                         <img
                           src={prod.image}
                           alt={prod.name}
-                          className="size-full object-contain p-1"
+                          className="size-full object-cover"
                         />
                       ) : (
                         <PackageOpen className="size-6 text-muted-foreground" />
