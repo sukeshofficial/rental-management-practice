@@ -1,0 +1,778 @@
+# Antigravity Prompt — Upgrade the Rental Management Create Product Page
+
+## 1. Objective
+
+Upgrade the existing **Create Product** page in our Rental Management application to match the supplied UI reference image as closely as possible, improving visual hierarchy, usability, spacing, and interactive behavior.
+
+Follow the existing `frontend-skill.md` instructions as the mandatory design and implementation standard.
+
+**This is an upgrade to the existing page, not a complete application redesign.** Inspect the current implementation before modifying it. Preserve existing functionality, routing, business logic, and project conventions.
+
+## 2. Mandatory Design Reference
+
+Use the latest supplied Create Product UI screenshot as the primary visual reference.
+
+Preserve its overall composition:
+
+- Fixed top navigation bar.
+- Breadcrumb navigation.
+- Create Product heading and supporting description.
+- Top-right Cancel and Save Product actions.
+- Three-column desktop workspace:
+  1. Product Information.
+  2. Rental Pricing and Rental Reservation Charges.
+  3. Product Preview.
+
+Use a clean, modern SaaS dashboard aesthetic with a white/light-gray background, subtle borders, restrained shadows, rounded cards, consistent typography, and purple as the primary action color.
+
+Do not introduce unrelated features or redesign the application shell unnecessarily.
+
+## 3. Critical Design Requirements
+
+### A. Top navigation
+
+Keep the existing application navigation:
+
+- Home icon.
+- Dashboard.
+- Rental.
+- Order.
+- Products — active state.
+- Reporting.
+- Setting.
+- Global search.
+- Light/dark theme toggle.
+- Notifications.
+- User profile dropdown.
+
+The navigation should remain fixed or sticky according to the existing application behavior. Ensure the page content does not become obscured beneath it.
+
+Use the existing navigation component if one already exists. Do not create a duplicate navbar.
+
+### B. Page header
+
+Display:
+
+- Breadcrumb: `Products > Create Product`.
+- Heading: `Create Product`.
+- Description: `Add product details and configure rental pricing and set additional charges.`
+- Cancel button.
+- Primary purple Save Product button with a suitable icon.
+
+**Important:** Keep the Save Product action in the page header. Do not add another fixed or sticky save bar at the bottom.
+
+### C. Product Information card
+
+Keep the following fields and functionality:
+
+1. Product Images.
+   - Drag-and-drop upload area.
+   - Click-to-browse interaction.
+   - Image format and size guidance.
+   - Thumbnail previews for uploaded images.
+   - Remove-image action.
+   - Add More action.
+
+2. Product Name.
+   - Required field.
+   - Character counter.
+   - Helpful validation.
+
+3. Base Price (Reference).
+   - Required numeric input.
+   - Indian rupee prefix.
+   - Appropriate numeric validation.
+
+4. Category.
+   - Required dropdown.
+
+5. Color.
+   - Required dropdown.
+   - Show a color indicator where appropriate.
+
+6. Product Description.
+   - Multiline text input.
+   - Character counter.
+
+Maintain the reference image's compact, well-aligned form layout. Avoid unnecessary nested cards and redundant helper text.
+
+### D. Rental Pricing card
+
+Retain the pricing table with these columns:
+
+- Row number.
+- Duration.
+- Price List.
+- Price (₹).
+- Actions.
+
+Each pricing row must support:
+
+- Duration selection through a dropdown.
+- Price List selection through a dropdown.
+- Numeric rental price entry.
+- Removing a pricing row.
+
+Include an **Add Pricing Rule** button that dynamically appends another pricing row.
+
+Use sensible spacing and consistent control heights. Keep the pricing inputs aligned across rows.
+
+Do not add the previously rejected Bulk Actions dropdown, informational banner, or unrelated controls.
+
+### E. Rental Reservation Charges card — MUST BE PRESERVED
+
+Keep the separate **Rental Reservation Charges** section directly below the Rental Pricing card.
+
+It must contain all three configurable charges:
+
+- **Extra Hour** — numeric input in ₹.
+- **Extra Day** — numeric input in ₹.
+- **Additional Charge** — numeric input in ₹.
+
+Provide concise descriptions explaining each charge where appropriate.
+
+Use the existing layout style: charge label on the left, numeric input in the middle, and optional explanatory text on the right.
+
+**Do not remove, collapse, hide, or replace these three charge fields.** They are required parts of the product creation form and must remain visible in the default desktop view.
+
+### F. Product Preview card
+
+The right-hand card must be titled exactly:
+
+**Product Preview**
+
+Do not use `Live Preview` as its title.
+
+Keep the following elements:
+
+1. Product image carousel with previous/next controls.
+2. Image position indicator, such as `1/3`.
+3. Fullscreen or image expansion control, if supported.
+4. Product name.
+5. Product price in Indian rupees.
+6. Category.
+7. Color.
+8. Product description.
+9. Rental Pricing summary.
+10. Additional Charges summary.
+
+The preview should update as the user changes product details, images, pricing rules, category, color, description, and additional charges.
+
+Use the current form state as the source of truth. Do not maintain a separate, conflicting copy of the same data for the preview.
+
+#### Draft badge placement — IMPORTANT
+
+Display a small, subtle **Draft** badge in the Product Preview card, positioned beside the product name or in the same product-title area as shown in the supplied reference.
+
+- Do not place the Draft badge in the Product Information card.
+- Do not place it in the page header.
+- Do not place it over the image unless the reference specifically requires that behavior.
+
+Keep the badge visually secondary to the product name and price.
+
+#### Product image controls — IMPORTANT
+
+Keep the large image carousel and its previous/next controls.
+
+Remove the separate row of thumbnail images beneath the carousel. The carousel controls and image position indicator are sufficient for navigating the preview images.
+
+Do not remove the image thumbnails from the **Product Information** upload section; those are necessary for managing uploaded images.
+
+### G. Bottom save bar — REMOVE COMPLETELY
+
+Remove the bottom sticky or fixed save bar, including:
+
+- Unsaved changes message.
+- Duplicate Cancel button.
+- Duplicate Save Product button.
+- Any fixed footer or overlay introduced solely for those actions.
+
+The page must end naturally after its content. Do not replace the removed bar with another fixed element that covers the page.
+
+Keep the original Cancel and Save Product buttons in the top page header.
+
+## 4. Layout and Responsive Behavior
+
+For desktop, maintain the three-column structure shown in the reference.
+
+- Left column: Product Information.
+- Middle column: Rental Pricing followed by Rental Reservation Charges.
+- Right column: Product Preview.
+
+Use CSS Grid or the existing layout utilities. Keep the preview column appropriately sized without squeezing the form fields or pricing controls.
+
+For smaller screens:
+
+- Reflow the columns into a logical vertical layout.
+- Keep all required fields visible and usable.
+- Prevent horizontal page overflow.
+- Ensure dropdowns and numeric inputs fit their containers.
+- Keep primary actions reachable.
+- Avoid fixed heights that clip descriptions or dynamically added pricing rows.
+
+Do not blindly scale the desktop layout down to mobile dimensions.
+
+## 5. Light and Dark Themes
+
+Support both themes using the application's existing theme provider and semantic design tokens.
+
+### Light mode
+
+- White or very light neutral surfaces.
+- Dark, legible text.
+- Subtle gray borders.
+- Restrained shadows.
+- Purple primary actions.
+- Muted secondary text with sufficient contrast.
+
+### Dark mode
+
+- Deliberate dark surfaces with clear separation between the page, cards, and controls.
+- Readable foreground and secondary text.
+- Appropriate borders and focus indicators.
+- Purple accents adjusted for visibility.
+- Correctly styled dropdowns, inputs, badges, image controls, and hover states.
+
+Do not implement dark mode by merely inverting colors.
+
+Do not introduce a second theme provider if one already exists. Avoid hardcoded colors that bypass the established theme system.
+
+## 6. Modular and Reusable Components — Mandatory
+
+Build on the existing component architecture instead of placing the entire page into one oversized component.
+
+Inspect the current repository and reuse existing components before creating new ones.
+
+Where appropriate, use or extract components such as:
+
+- `ProductInformationCard`
+- `ProductImageUploader`
+- `ProductImageGallery`
+- `ProductFormField`
+- `RentalPricingCard`
+- `RentalPricingRow`
+- `RentalReservationCharges`
+- `ProductPreviewCard`
+- `ProductImageCarousel`
+- `ProductSummarySection`
+- `PageHeader`
+- `Breadcrumbs`
+
+These are suggested responsibility boundaries, not a requirement to create a separate file for every small element. Follow the project's existing naming and folder conventions.
+
+### Props and reusability requirements
+
+Every component intended for reuse must expose appropriate props for its content, state, and behavior.
+
+Examples of suitable prop contracts include:
+
+- `title`, `description`, and `className` for configurable card presentation.
+- `value`, `onChange`, `label`, `error`, `required`, and `disabled` for reusable form fields.
+- `images`, `onImagesChange`, and `onRemoveImage` for image management.
+- `pricingRules`, `onPricingRulesChange`, and `priceLists` for rental pricing.
+- `charges` and `onChargesChange` for reservation charges.
+- `product`, `pricingRules`, `charges`, and `status` for the product preview.
+
+Adapt these examples to the existing state-management and component conventions. Do not introduce redundant props when a component already obtains the required state through an established pattern.
+
+Use controlled components where the parent needs to coordinate form state and preview updates.
+
+Avoid hardcoding product names, prices, categories, colors, or pricing rows inside reusable components. Use realistic sample values only in an existing demo or preview state.
+
+Keep reusable visual primitives separate from product-specific business logic where that separation improves maintainability.
+
+## 7. Preserve Existing Functionality
+
+Before modifying the page:
+
+1. Inspect the existing route and page component.
+2. Identify the form state and validation logic.
+3. Inspect image upload and preview handling.
+4. Identify how pricing rules and additional charges are stored.
+5. Check existing theme configuration and shared UI components.
+6. Review installed dependencies and existing icon libraries.
+
+Preserve existing API integrations, save behavior, cancellation behavior, validation, and data models.
+
+Do not replace working backend integrations with fake submissions or mock implementations.
+
+If a feature is not yet connected to a backend, keep its frontend behavior honest and consistent with the current project.
+
+Do not install duplicate dependencies or introduce unnecessary libraries. Install a new package only if the existing project genuinely lacks the required capability.
+
+## 8. Typography and Design Consistency
+
+Follow `frontend-skill.md` as the source of the project's design and engineering standards.
+
+Reuse the existing typography system, font families, font weights, spacing tokens, border radii, shadows, icons, and color variables wherever available.
+
+Maintain consistent styling across:
+
+- Page headings.
+- Section headings.
+- Form labels.
+- Helper text.
+- Input fields.
+- Primary and secondary buttons.
+- Cards.
+- Dropdowns.
+- Badges.
+- Borders and separators.
+
+Do not invent a different visual style for each card. Use a shared component and token system while allowing purposeful variations.
+
+Avoid excessive gradients, decorative icons, unnecessary animation, excessive rounded containers, and redundant information.
+
+## 9. Interaction and Accessibility
+
+Ensure that all visible controls have meaningful behavior.
+
+- Image upload and removal work.
+- Image navigation works.
+- Add Pricing Rule adds a row.
+- Removing a pricing row works.
+- Dropdowns update their selected values.
+- Numeric inputs validate appropriately.
+- Product Preview updates from the current form state.
+- Cancel follows the existing cancellation flow.
+- Save Product uses the existing save flow.
+- Validation errors are visible and actionable.
+- Loading and disabled states are handled where appropriate.
+- Keyboard navigation and focus indicators work.
+- Inputs have accessible labels.
+- Motion respects reduced-motion preferences.
+
+Do not add decorative controls that do nothing.
+
+## 10. Implementation and Verification Workflow
+
+Follow the existing `frontend-skill.md` workflow:
+
+1. Inspect the existing codebase and design system.
+2. Analyze the supplied screenshot.
+3. Identify the smallest necessary implementation changes.
+4. Reuse or refine existing components.
+5. Implement the updated layout and interactions.
+6. Verify light and dark modes.
+7. Run the available build or validation checks.
+8. Inspect the rendered page at desktop and mobile widths when browser tools are available.
+9. Fix actual layout, theme, and interaction defects.
+10. Report what changed and which checks were actually completed.
+
+Do not claim successful testing unless it was performed.
+
+## 11. Final Acceptance Checklist
+
+Before considering the work complete, verify:
+
+- [ ] The page follows the supplied reference.
+- [ ] The fixed or sticky navbar behaves correctly.
+- [ ] The page header contains the primary Save Product and Cancel actions.
+- [ ] Product Information contains all required fields.
+- [ ] Rental Pricing supports adding and removing rows.
+- [ ] Extra Hour, Extra Day, and Additional Charge remain visible.
+- [ ] The right-hand card is titled `Product Preview`.
+- [ ] The Draft badge appears beside the product name in Product Preview.
+- [ ] The separate preview thumbnail row is removed.
+- [ ] The image carousel controls and image counter remain.
+- [ ] Product Preview updates from the form's current state.
+- [ ] The bottom sticky save bar is completely removed.
+- [ ] Existing backend, validation, and routing behavior is preserved.
+- [ ] Reusable components accept suitable props.
+- [ ] Typography, spacing, buttons, cards, and colors remain consistent.
+- [ ] Light and dark themes both work.
+- [ ] Responsive layouts are usable.
+- [ ] Available validation checks are completed and reported honestly.
+
+**Final instruction:** Implement the changes directly in the existing project. Prioritize reference fidelity, modularity, functionality, and consistency with `frontend-skill.md`. Do not rebuild unrelated application sections or introduce features that were not requested.
+
+
+
+
+
+# Antigravity Prompt — Product Detail UI with Animated Settings Action Drawer
+
+## 1. Objective
+
+Upgrade the existing Rental Management **Product Detail page** to match the attached UI reference.
+
+Follow the attached `frontend-skill(4).md` as the design and engineering standard.
+
+The task is specifically to refine the existing product detail screen and replace the permanently visible Edit Product, Duplicate, and Delete Product buttons with a single animated settings gear that reveals these actions inside a drawer opening toward the left.
+
+**This is a Product Detail page, not a Create Product form.** Preserve the read-only product information, rental pricing, reservation charges, image galleries, product preview, existing navigation, and data integrations.
+
+Use React, JavaScript, and JSX. Do not introduce TypeScript or `.tsx` implementations for new components.
+
+## 2. Mandatory first step — Inspect the existing project
+
+Before changing code, inspect:
+
+- The existing Product Detail page and its route.
+- The current React Router configuration.
+- The shared admin navbar and page-header components.
+- Existing product data models and product selection logic.
+- Existing product image gallery and preview components.
+- Shared buttons, icons, badges, cards, menus, and confirmation dialogs.
+- Existing CSS variables, Tailwind configuration, typography, spacing, and border-radius conventions.
+- Existing light/dark theme implementation.
+- Installed icon and animation dependencies.
+
+Reuse and extend existing components wherever possible. Do not rebuild the application shell, replace the routing architecture, or duplicate existing shared components.
+
+Do not install new dependencies until you have checked what is already available.
+
+## 3. Page structure and visual reference
+
+Reproduce the general appearance of the supplied screenshot.
+
+### Top navigation
+
+Preserve the existing admin navbar containing:
+
+- Home.
+- Dashboard.
+- Rental.
+- Order.
+- Products, marked active.
+- Reporting.
+- Setting.
+- Global search.
+- Theme toggle.
+- Notifications.
+- User profile dropdown.
+
+Keep the navbar sticky or fixed according to the existing application behavior and ensure page content does not overlap it.
+
+### Product header
+
+Display:
+
+- Breadcrumb: `Products > [Product Name]`.
+- Product name as the page heading.
+- A subtle Draft badge beside the product name.
+- Supporting text describing the product-detail view.
+
+At the right of the header, include:
+
+1. A separate `Back to Products` button.
+2. A settings gear button controlling the contextual action drawer.
+
+Do not keep permanent Edit Product, Duplicate, and Delete Product buttons visible when the drawer is closed. These actions must be accessible through the gear control.
+
+Keep the header compact and aligned with the existing design system.
+
+## 4. Main content — three-column layout
+
+Maintain the reference's three-column desktop structure.
+
+### A. Product Information
+
+Display product information in read-only mode.
+
+Include:
+
+- Main product image.
+- Previous/next image controls where multiple images are available.
+- Image position indicator.
+- Image expansion control if supported.
+- Thumbnail gallery for selecting product images.
+- Product name.
+- Base Price (Reference).
+- Category.
+- Color.
+- Product Description.
+
+Show values from the currently selected product. Do not hardcode a particular product into the reusable component.
+
+Use clear label/value alignment, readable spacing, subtle dividers, and the existing typography system.
+
+The main product information must remain read-only unless the user chooses Edit Product from the settings drawer.
+
+### B. Rental Pricing
+
+Show a read-only table with these columns:
+
+- Row number.
+- Duration.
+- Price List.
+- Price (₹).
+
+Display every pricing rule associated with the selected product.
+
+Use Indian rupee formatting consistently. Keep rows aligned with clear separators and appropriate numeric alignment.
+
+Do not show editable dropdowns, numeric input controls, row-delete buttons, or an Add Pricing Rule button in the read-only detail state.
+
+### C. Rental Reservation Charges
+
+Preserve the separate Rental Reservation Charges section below the pricing table.
+
+Display all three charges:
+
+- Extra Hour.
+- Extra Day.
+- Additional Charge.
+
+Show each charge's label, amount in Indian rupees, and a short explanation if one exists in the application.
+
+Render these as read-only values, not editable fields.
+
+### D. Product Preview
+
+Keep the right-hand Product Preview card with:
+
+- Product image carousel.
+- Previous/next controls.
+- Image position indicator.
+- Product name.
+- Draft badge beside the product name.
+- Base price.
+- Category.
+- Color.
+- Description.
+- Rental Pricing summary.
+- Additional Charges summary.
+
+The preview must reflect the same product data shown in Product Information. Do not maintain separate, conflicting copies of the product's pricing or metadata.
+
+The Product Preview is informational, not a second editing interface.
+
+## 5. Settings gear — required interaction
+
+This is the main new UX feature.
+
+Replace the permanently displayed Edit Product, Duplicate, and Delete Product buttons with a compact gear button positioned immediately beside the Back to Products action in the product header.
+
+### Default state
+
+When the drawer is closed:
+
+- Display only the settings gear button and Back to Products button.
+- Keep the product header clean, uncluttered, and aligned.
+- Give the gear button a consistent outline, border radius, focus ring, and hover state.
+- Provide the accessible label `Product actions`.
+- Set `aria-expanded="false"` and associate the control with the action drawer.
+
+### Open state — drawer expands toward the left
+
+When the gear button is clicked:
+
+1. Rotate the gear smoothly as the drawer opens.
+2. Expand a horizontal contextual action drawer from the gear toward the left.
+3. Position the drawer so it visually opens behind the Back to Products button when the two occupy overlapping space.
+4. Keep the Back to Products button above the drawer in the visual stacking order, with its click behavior fully preserved.
+5. Reveal three clearly identifiable actions:
+   - Edit Product.
+   - Duplicate.
+   - Delete Product.
+6. Use icons and text labels for all three actions.
+7. Apply a restrained surface shadow, consistent border, and appropriate spacing.
+8. Keep all action labels readable and clickable.
+
+**The drawer must open leftward from the gear, not toward the right.** The animation must feel like a horizontal drawer being pulled out from behind the header controls, not like a standard dropdown menu opening downward.
+
+The drawer must not obscure the product content unnecessarily or cause the header layout to jump.
+
+Use a suitable positioning and stacking strategy so that the action panel expands smoothly while the Back to Products button remains accessible and visually in front wherever they overlap.
+
+### Close behavior
+
+The gear must behave as a genuine toggle.
+
+- Clicking it while open closes the drawer and reverses the gear rotation.
+- Clicking outside the drawer closes it.
+- Pressing Escape closes it.
+- Selecting an action closes the drawer before or as the action begins.
+- When the drawer closes, return to the compact default header state.
+
+Do not leave the drawer open after navigation.
+
+### Animation specifications
+
+Use the existing animation utilities or CSS transitions if available.
+
+Target an approximately 200–300 ms interaction.
+
+The gear may rotate about 90–180 degrees during opening, then return smoothly during closing. Choose the rotation amount that feels natural and keeps the icon visually clear.
+
+Use a restrained combination of:
+
+- Gear rotation.
+- Horizontal drawer expansion or translation.
+- A subtle opacity transition.
+- Appropriate easing.
+
+The movement should feel connected: the drawer opens as the gear rotates and retracts as the gear returns.
+
+Do not use continuous spinning, exaggerated bouncing, large scaling effects, or animation delays that slow down the user.
+
+Respect `prefers-reduced-motion` by reducing or removing nonessential animation.
+
+## 6. Action behavior
+
+The settings drawer is not merely decorative. Each action must have meaningful behavior.
+
+### Edit Product
+
+Navigate to the existing product edit flow.
+
+- Reuse the existing edit route and form.
+- Pass or preserve the selected product ID.
+- Do not create another edit page if one already exists.
+- Do not modify the product until the user explicitly saves changes.
+
+### Duplicate
+
+Reuse the existing product-duplication functionality if available.
+
+If it exists, duplicate the selected product using the application's current rules.
+
+If duplicate functionality does not exist, implement the appropriate frontend entry point only when the current architecture supports it. Do not falsely claim that a product has been persisted.
+
+Preserve sensible duplication behavior for fields such as name, images, category, rental pricing, and reservation charges. Inspect existing business rules before determining which fields should be copied.
+
+### Delete Product
+
+Treat deletion as a destructive operation.
+
+- Use the existing deletion API or application service.
+- Open a confirmation dialog before deletion.
+- Identify the product being deleted.
+- Clearly distinguish the destructive confirmation action.
+- Allow cancellation without changing the product.
+- Handle errors and loading states appropriately.
+- Navigate back to the Products page only after successful deletion.
+
+Do not delete a product merely because the drawer item was clicked.
+
+If the backend operation is unavailable, do not pretend deletion succeeded.
+
+## 7. Props and reusable component architecture
+
+Reuse existing components first. Where the action drawer is a new responsibility, implement it as a reusable, prop-driven component that follows existing project conventions.
+
+A possible component is `ProductActionsDrawer`.
+
+Its API should support meaningful configuration such as:
+
+- `product`: the selected product or product identifier.
+- `onEdit`: callback for editing.
+- `onDuplicate`: callback for duplication.
+- `onDelete`: callback for deletion.
+- `isOpen`: controlled open state if compatible with the existing architecture.
+- `onOpenChange`: callback for open and close changes.
+- `className`: optional styling extension point.
+
+Adapt this API to the current codebase. Do not add redundant props if the project already has an established pattern.
+
+The action drawer must not implement product persistence or deletion logic independently of the application's existing services.
+
+Keep responsibilities separate:
+
+- The gear control manages the drawer's toggle and accessible state.
+- The drawer renders and animates the actions.
+- The page or existing product controller performs the actual operations.
+- Shared primitives handle button styling, icons, focus states, and confirmation dialogs.
+
+Use the existing icon library and component primitives where available. Do not add an animation library solely for a simple rotation and drawer transition.
+
+Avoid creating duplicate button, popover, dropdown, or dialog implementations.
+
+## 8. Light and dark themes
+
+Follow the existing application's theme provider and semantic tokens.
+
+Both light and dark modes must support:
+
+- Navbar and header.
+- Gear button.
+- Expanded action drawer.
+- Hover and focus states.
+- Edit and Duplicate actions.
+- Destructive Delete action.
+- Confirmation dialog.
+- Product information cards.
+- Rental pricing table.
+- Reservation charges.
+- Product Preview.
+
+Use semantic color tokens for surfaces, text, borders, primary actions, focus indicators, and destructive actions.
+
+Do not hardcode a light-only drawer background or use colors that become unreadable in dark mode.
+
+Keep the drawer visually distinct from the surrounding page without unnecessary gradients, excessive shadows, or ornamental effects.
+
+## 9. Responsive behavior
+
+At desktop widths, position the action drawer horizontally to the left of the gear and retain the three-column product detail layout.
+
+At narrower widths:
+
+- Prevent the drawer from extending beyond the viewport.
+- Preserve accessible Back to Products behavior.
+- Keep every action readable and reachable.
+- Adapt the drawer width and action layout where necessary.
+- Preserve the existing responsive product-detail columns.
+- Avoid horizontal page overflow or clipped controls.
+
+If there is insufficient horizontal space for the desktop drawer, use a responsive adaptation while preserving the same actions and visual design. Do not force the desktop animation into a narrow viewport.
+
+## 10. Accessibility and interaction quality
+
+Ensure:
+
+- The gear is a real keyboard-accessible button.
+- Its accessible name describes the available product actions.
+- `aria-expanded` accurately reflects the drawer state.
+- Escape closes the drawer.
+- Focus remains logical when the drawer opens and closes.
+- Every action has an accessible name.
+- Visible focus indicators work in both themes.
+- Delete confirmation manages focus appropriately.
+- Reduced-motion preferences are respected.
+- Click targets remain usable on touch devices.
+
+Do not make color or animation the only way to identify an action.
+
+## 11. Strict implementation boundaries
+
+- Implement the Product Detail page and its action-drawer integration only.
+- Do not redesign the Create Product page as part of this task.
+- Do not introduce a fixed bottom save bar.
+- Do not replace the existing navbar or theme provider.
+- Do not add new permanent Edit, Duplicate, and Delete buttons outside the drawer.
+- Do not change unrelated routes or components.
+- Do not rewrite backend services or data models without a concrete requirement.
+- Use React JSX and JavaScript only for new custom components.
+
+Preserve the existing product-detail layout, typography, visual tokens, and page behavior.
+
+## 12. Verification and final checklist
+
+Before declaring the task complete, verify the following where the available tools permit:
+
+- [ ] Product Detail matches the supplied screenshot.
+- [ ] The settings gear appears beside Back to Products.
+- [ ] The drawer opens toward the left.
+- [ ] The Back to Products button remains clickable and visually in front where overlap occurs.
+- [ ] The gear rotates smoothly when opening and closing.
+- [ ] The drawer closes on a second gear click, outside click, and Escape.
+- [ ] Edit Product opens the correct existing edit flow.
+- [ ] Duplicate follows the available application behavior.
+- [ ] Delete requires confirmation.
+- [ ] The drawer does not cause header layout jumps.
+- [ ] Read-only product information, pricing, and additional charges remain intact.
+- [ ] Product Preview remains consistent with the selected product.
+- [ ] Light and dark themes work correctly.
+- [ ] Responsive behavior remains usable.
+- [ ] Available build and validation checks have been run.
+- [ ] Verification claims accurately reflect the actual checks performed.
+
+## Final instruction
+
+Implement this as an enhancement to the existing Product Detail page.
+
+The key interaction is a **settings gear that rotates as a contextual action drawer expands smoothly toward the left, visually passing behind the Back to Products button without interfering with its functionality**.
+
+Preserve the visual reference, reusable component architecture, existing project behavior, and every applicable standard in `frontend-skill(4).md`.
