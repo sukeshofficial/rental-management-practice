@@ -1,0 +1,903 @@
+{
+  "info": {
+    "_postman_id": "19326bef-dda7-420e-9223-8057489635ac",
+    "name": "Rental Management - Products API Tests",
+    "description": "Import into Postman. Configure baseUrl, adminToken, staffToken, customerToken. Run requests in order. Staff token should belong to active internal_staff with inventory.manage.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "REPLACE_WITH_ADMIN_JWT",
+      "type": "string"
+    },
+    {
+      "key": "staffToken",
+      "value": "REPLACE_WITH_INTERNAL_STAFF_JWT_WITH_INVENTORY_MANAGE",
+      "type": "string"
+    },
+    {
+      "key": "customerToken",
+      "value": "REPLACE_WITH_CUSTOMER_JWT",
+      "type": "string"
+    },
+    {
+      "key": "productId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "productSlug",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "productSku",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "productName",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "01 - Get categories (public)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/products/categories",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "products",
+            "categories"
+          ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Categories returned\",()=>{pm.response.to.have.status(200);let j=pm.response.json();pm.expect(j.success).eql(true);pm.expect(j.categories).to.be.an(\"array\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 - Create product (admin)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{adminToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/products",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "products"
+          ]
+        },
+        "description": "",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"{{productName}}\",\n  \"sku\": \"{{productSku}}\",\n  \"description\": \"Postman product API test\",\n  \"category\": \"Cameras & Accessories\",\n  \"color\": \"Black\",\n  \"images\": [\n    {\n      \"url\": \"https://example.com/postman-camera.jpg\",\n      \"alt\": \"Test camera\",\n      \"sortOrder\": 0\n    }\n  ],\n  \"keywords\": [\n    \"camera\",\n    \"photography\",\n    \"mirrorless\"\n  ],\n  \"isRentable\": true,\n  \"basePrice\": 25000,\n  \"currency\": \"INR\",\n  \"pricingRules\": [\n    {\n      \"duration\": \"1 Day\",\n      \"pricelist\": \"Standard\",\n      \"price\": 1200,\n      \"isActive\": true\n    },\n    {\n      \"duration\": \"1 Week\",\n      \"pricelist\": \"Premium\",\n      \"price\": 6500,\n      \"isActive\": true\n    }\n  ],\n  \"reservationCharges\": {\n    \"extraHour\": 100,\n    \"extraDay\": 500,\n    \"additionalCharge\": 0\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const stamp=Date.now();pm.collectionVariables.set(\"productName\",`Postman Test Camera ${stamp}`);pm.collectionVariables.set(\"productSku\",`POSTMAN-CAM-${stamp}`);"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Created product and saved identifiers\",()=>{pm.response.to.have.status(201);let j=pm.response.json();pm.expect(j.success).eql(true);pm.expect(j.product.status).eql(\"active\");pm.collectionVariables.set(\"productId\",j.product.id||j.product._id);pm.collectionVariables.set(\"productSlug\",j.product.slug);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 - List active products (public)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/products?page=1&limit=12&sortBy=name&sortOrder=asc",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "products"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "limit",
+              "value": "12"
+            },
+            {
+              "key": "sortBy",
+              "value": "name"
+            },
+            {
+              "key": "sortOrder",
+              "value": "asc"
+            }
+          ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Public list contains active products only\",()=>{pm.response.to.have.status(200);let j=pm.response.json();pm.expect(j.success).eql(true);pm.expect(j.products).to.be.an(\"array\");j.products.forEach(p=>pm.expect(p.status).eql(\"active\"));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 - Get created product by ID (public)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/products/{{productId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "products",
+            "{{productId}}"
+          ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Active product details are public\",()=>{pm.response.to.have.status(200);let j=pm.response.json();pm.expect(j.success).eql(true);pm.expect(j.product.status).eql(\"active\");pm.expect(j.product.id).eql(pm.collectionVariables.get(\"productId\"));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 - Search by keyword",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/products?q=camera&page=1&limit=12",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "products"
+          ],
+          "query": [
+            {
+              "key": "q",
+              "value": "camera"
+            },
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "limit",
+              "value": "12"
+            }
+          ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Search returns product list and pagination\",()=>{pm.response.to.have.status(200);let j=pm.response.json();pm.expect(j.success).eql(true);pm.expect(j.products).to.be.an(\"array\");pm.expect(j.pagination).to.have.property(\"total\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 - Filter by category",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/products?category=Cameras%20%26%20Accessories&page=1&limit=12",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "products"
+          ],
+          "query": [
+            {
+              "key": "category",
+              "value": "Cameras%20%26%20Accessories"
+            },
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "limit",
+              "value": "12"
+            }
+          ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"All results match category\",()=>{pm.response.to.have.status(200);let j=pm.response.json();pm.expect(j.success).eql(true);j.products.forEach(p=>pm.expect(p.category).eql(\"Cameras & Accessories\"));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 - Filter by base-price range",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/products?minPrice=1000&maxPrice=30000&page=1&limit=12",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "products"
+          ],
+          "query": [
+            {
+              "key": "minPrice",
+              "value": "1000"
+            },
+            {
+              "key": "maxPrice",
+              "value": "30000"
+            },
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "limit",
+              "value": "12"
+            }
+          ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Results respect base-price range\",()=>{pm.response.to.have.status(200);let j=pm.response.json();pm.expect(j.success).eql(true);j.products.forEach(p=>{pm.expect(p.basePrice).at.least(1000);pm.expect(p.basePrice).at.most(30000);});});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 - Update product (internal staff)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{staffToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/products/{{productId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "products",
+            "{{productId}}"
+          ]
+        },
+        "description": "",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"description\": \"Updated by Postman product API test\",\n  \"color\": \"Graphite\",\n  \"keywords\": [\n    \"camera\",\n    \"photography\",\n    \"updated\"\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Staff update succeeds\",()=>{pm.response.to.have.status(200);let j=pm.response.json();pm.expect(j.success).eql(true);pm.expect(j.product.description).eql(\"Updated by Postman product API test\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 - Customer cannot create product",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{customerToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/products",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "products"
+          ]
+        },
+        "description": "",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Customer Forbidden Product\",\n  \"sku\": \"POSTMAN-CUSTOMER-FORBIDDEN\",\n  \"category\": \"Cameras & Accessories\",\n  \"basePrice\": 1000,\n  \"keywords\": [],\n  \"pricingRules\": []\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Customer denied product creation\",()=>{pm.expect([401,403]).to.include(pm.response.code);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 - Unauthenticated user cannot create product",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/products",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "products"
+          ]
+        },
+        "description": "",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Unauthenticated Forbidden Product\",\n  \"sku\": \"POSTMAN-UNAUTH-FORBIDDEN\",\n  \"category\": \"Cameras & Accessories\",\n  \"basePrice\": 1000,\n  \"keywords\": [],\n  \"pricingRules\": []\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Unauthenticated request denied\",()=>{pm.expect([401,403]).to.include(pm.response.code);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "11 - Reject invalid category",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{adminToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/products",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "products"
+          ]
+        },
+        "description": "",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Invalid Category Product\",\n  \"sku\": \"POSTMAN-INVALID-CATEGORY\",\n  \"category\": \"Invalid Category\",\n  \"basePrice\": 1000,\n  \"keywords\": [],\n  \"pricingRules\": []\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Invalid category rejected\",()=>{pm.response.to.have.status(400);pm.expect(pm.response.json().success).eql(false);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "12 - Reject invalid duration unit",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{adminToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/products",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "products"
+          ]
+        },
+        "description": "",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Invalid Pricing Product\",\n  \"sku\": \"POSTMAN-INVALID-PRICING\",\n  \"category\": \"Cameras & Accessories\",\n  \"basePrice\": 1000,\n  \"keywords\": [],\n  \"pricingRules\": [\n    {\n      \"duration\": {\n        \"durationValue\": 1,\n        \"durationUnit\": \"year\"\n      },\n      \"pricelist\": \"Standard\",\n      \"price\": 100\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Invalid duration unit rejected\",()=>{pm.response.to.have.status(400);pm.expect(pm.response.json().success).eql(false);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "13 - Reject invalid sort field",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/products?sortBy=password&page=1&limit=12",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "products"
+          ],
+          "query": [
+            {
+              "key": "sortBy",
+              "value": "password"
+            },
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "limit",
+              "value": "12"
+            }
+          ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Invalid sort field rejected\",()=>{pm.response.to.have.status(400);pm.expect(pm.response.json().success).eql(false);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "14 - Reject oversized search query",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/products?q=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "products"
+          ],
+          "query": [
+            {
+              "key": "q",
+              "value": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+            }
+          ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Query over 200 characters rejected\",()=>{pm.response.to.have.status(400);pm.expect(pm.response.json().success).eql(false);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "15 - Archive product (admin)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{adminToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/products/{{productId}}/archive",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "products",
+            "{{productId}}",
+            "archive"
+          ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Product archived\",()=>{pm.response.to.have.status(200);let j=pm.response.json();pm.expect(j.success).eql(true);pm.expect(j.product.status).eql(\"archived\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "16 - Public list must exclude archived product",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/products",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "products"
+          ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Archived product hidden from public list\",()=>{pm.response.to.have.status(200);let j=pm.response.json();pm.expect(j.success).eql(true);pm.expect(j.products.some(p=>p.id===pm.collectionVariables.get(\"productId\"))).eql(false);j.products.forEach(p=>pm.expect(p.status).eql(\"active\"));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "17 - Public detail must hide archived product",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/products/{{productId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "products",
+            "{{productId}}"
+          ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Archived product appears not found to public\",()=>{pm.response.to.have.status(404);pm.expect(pm.response.json().success).eql(false);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "18 - Staff can list archived products",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{staffToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/products?status=archived&page=1&limit=100",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "products"
+          ],
+          "query": [
+            {
+              "key": "status",
+              "value": "archived"
+            },
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "limit",
+              "value": "100"
+            }
+          ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Staff list includes archived product\",()=>{pm.response.to.have.status(200);let j=pm.response.json();pm.expect(j.success).eql(true);pm.expect(j.products.some(p=>p.id===pm.collectionVariables.get(\"productId\"))).eql(true);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "19 - Staff can get archived product details",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{staffToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/products/{{productId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "products",
+            "{{productId}}"
+          ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Staff can read archived product detail\",()=>{pm.response.to.have.status(200);let j=pm.response.json();pm.expect(j.success).eql(true);pm.expect(j.product.status).eql(\"archived\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "20 - Reject duplicate SKU",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{adminToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/products",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "products"
+          ]
+        },
+        "description": "",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Duplicate SKU Test Product\",\n  \"sku\": \"{{productSku}}\",\n  \"category\": \"Cameras & Accessories\",\n  \"basePrice\": 1000,\n  \"keywords\": [],\n  \"pricingRules\": []\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Duplicate SKU rejected with 409\",()=>{pm.response.to.have.status(409);pm.expect(pm.response.json().success).eql(false);});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

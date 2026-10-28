@@ -9,6 +9,7 @@ import healthRoutes from "./routes/health.routes.js";
 import testInputRoutes from "./routes/testInput.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import adminStaffRoutes from "./routes/adminStaff.routes.js";
+import productRoutes from "./routes/product.routes.js";
 
 const app = express();
 
@@ -70,6 +71,7 @@ app.use("/api/v1/test-input", testInputRoutes);
 app.use("/api/v1/auth", authRoutes);
 // app.use("/api/auth", authRoutes); // Compatibility alias
 app.use("/api/v1/admin/staff", adminStaffRoutes);
+app.use("/api/v1/products", productRoutes);
 // app.use("/api/admin/staff", adminStaffRoutes); // Compatibility alias
 
 
