@@ -2,7 +2,8 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, useLocation, Link } from "react-router-dom";
-import { ArrowRight, Check, AlertCircle, ChevronRight } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { ArrowRight, Check, AlertCircle, ChevronRight, Loader2 } from "lucide-react";
 import AdminNavbar from "@/components/admin/AdminNavbar";
 import ProductInformationCard from "@/components/admin/ProductInformationCard";
 import RentalPricingCard from "@/components/admin/RentalPricingCard";
@@ -11,82 +12,96 @@ import ProductPreviewCard from "@/components/admin/ProductPreviewCard";
 import {
   createProduct,
   updateProduct,
-  getProductById,
-} from "@/services/productService";
+  fetchProductById,
+  selectSelectedProduct,
+} from "@/redux/Slices/productsSlice";
+import { fetchProductByIdApi } from "@/api/productsApi";
 
 export default function CreateProductPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
   const editId = searchParams.get("edit");
 
-  // Initial demo default state aligns with the Canon EOS R6 reference mockup
+  // Initial empty form state for manual user input (not hardcoded by default)
   const [productData, setProductData] = useState({
-    name: "Canon EOS R6",
-    price: 2500,
+    name: "",
+    price: "",
     category: "Cameras & Accessories",
     color: "Black",
-    image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=80",
-    images: [
-      "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1512790182412-b19e6d62bc39?auto=format&fit=crop&w=800&q=80",
-    ],
-    description:
-      "High-performance full-frame mirrorless camera with 20.1MP sensor, 4K video recording and advanced autofocus. Ideal for professional photography and videography.",
+    image: "",
+    images: [],
+    description: "",
   });
 
   const [pricingRules, setPricingRules] = useState([
-    { id: "row-1", duration: "1 Hour", pricelist: "Standard", price: 300 },
-    { id: "row-2", duration: "1 Day", pricelist: "Standard", price: 800 },
-    { id: "row-3", duration: "3 Days", pricelist: "Standard", price: 2000 },
-    { id: "row-4", duration: "7 Days", pricelist: "Premium", price: 3500 },
+    { id: "row-1", duration: "1 Day", pricelist: "Standard", price: "" },
   ]);
 
   const [reservationCharges, setReservationCharges] = useState({
-    extraHour: 100,
-    extraDay: 300,
-    additionalCharge: 200,
+    extraHour: "",
+    extraDay: "",
+    additionalCharge: "",
   });
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [notice, setNotice] = useState("");
 
-  // Check if editing existing product
+  // Check if editing existing product from API or passed state
   useEffect(() => {
     if (editId) {
-      const existing = getProductById(editId);
-      if (existing) {
-        setProductData({
-          name: existing.name || "",
-          price: existing.price ?? "",
-          category: existing.category || "Cameras & Accessories",
-          color: existing.color || "Black",
-          image: existing.image || "",
-          images: existing.images || (existing.image ? [existing.image] : []),
-          description: existing.description || "",
-        });
-        if (Array.isArray(existing.pricingRules) && existing.pricingRules.length > 0) {
-          setPricingRules(existing.pricingRules);
-        }
-        if (existing.reservationCharges) {
-          setReservationCharges(existing.reservationCharges);
+      async function loadProduct() {
+        try {
+          const res = await fetchProductByIdApi(editId);
+          const existing = res.product;
+          if (existing) {
+            setProductData({
+              name: existing.name || "",
+              price: existing.basePrice ?? existing.price ?? "",
+              category: existing.category || "Cameras & Accessories",
+              color: existing.color || "Black",
+              image: existing.image || (existing.images?.[0]?.url || ""),
+              images: (existing.images || []).map((img) => (typeof img === "string" ? img : img.url)),
+              description: existing.description || "",
+            });
+            if (Array.isArray(existing.rentalPricing) && existing.rentalPricing.length > 0) {
+              setPricingRules(
+                existing.rentalPricing.map((r, i) => ({
+                  id: `rule-${i}`,
+                  duration: `${r.durationValue} ${r.durationUnit.charAt(0).toUpperCase() + r.durationUnit.slice(1)}${r.durationValue > 1 ? "s" : ""}`,
+                  pricelist: r.pricelist,
+                  price: r.price,
+                }))
+              );
+            }
+            if (existing.reservationCharges) {
+              setReservationCharges({
+                extraHour: existing.reservationCharges.extraHour ?? existing.extraHourCharge ?? 0,
+                extraDay: existing.reservationCharges.extraDay ?? existing.extraDayCharge ?? 0,
+                additionalCharge: existing.reservationCharges.additionalCharge ?? existing.additionalCharge ?? 0,
+              });
+            }
+          }
+        } catch (e) {
+          console.warn("Could not load product for edit:", e);
         }
       }
+      loadProduct();
     } else if (location.state?.product) {
       const p = location.state.product;
       setProductData({
         name: p.name || "",
-        price: p.price ?? "",
+        price: p.basePrice ?? p.price ?? "",
         category: p.category || "Cameras & Accessories",
         color: p.color || "Black",
         image: p.image || "",
-        images: p.images || (p.image ? [p.image] : []),
+        images: Array.isArray(p.images) ? p.images.map((i) => (typeof i === "string" ? i : i.url)) : [],
         description: p.description || "",
       });
-      if (Array.isArray(p.pricingRules) && p.pricingRules.length > 0) {
-        setPricingRules(p.pricingRules);
+      if (Array.isArray(p.rentalPricing) && p.rentalPricing.length > 0) {
+        setPricingRules(p.rentalPricing);
       }
       if (p.reservationCharges) {
         setReservationCharges(p.reservationCharges);
@@ -141,21 +156,39 @@ export default function CreateProductPage() {
     setPricingRules((prev) => prev.filter((r) => r.id !== ruleId));
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
     if (!validate()) return;
 
     setIsSubmitting(true);
+    setErrors({});
 
     try {
       const formattedPricing = pricingRules.map((rule) => ({
-        ...rule,
+        duration: rule.duration,
+        pricelist: rule.pricelist,
         price: Number(rule.price) || 0,
       }));
 
+      // Convert images array to strings or objects
+      const finalImages = Array.isArray(productData.images) && productData.images.length > 0
+        ? productData.images.filter(Boolean)
+        : productData.image
+        ? [productData.image]
+        : [];
+
       const payload = {
-        ...productData,
+        name: productData.name.trim(),
+        basePrice: Number(productData.price),
+        price: Number(productData.price),
+        category: productData.category,
+        color: productData.color,
+        description: productData.description,
+        images: finalImages,
         pricingRules: formattedPricing,
+        extraHourCharge: Number(reservationCharges.extraHour) || 0,
+        extraDayCharge: Number(reservationCharges.extraDay) || 0,
+        additionalCharge: Number(reservationCharges.additionalCharge) || 0,
         reservationCharges: {
           extraHour: Number(reservationCharges.extraHour) || 0,
           extraDay: Number(reservationCharges.extraDay) || 0,
@@ -163,45 +196,47 @@ export default function CreateProductPage() {
         },
       };
 
-      let result;
+      let actionResult;
       if (editId) {
-        result = updateProduct(editId, payload);
-        setNotice(`Product "${result.name}" updated successfully!`);
+        actionResult = await dispatch(updateProduct({ productId: editId, payload }));
       } else {
-        result = createProduct(payload);
-        setNotice(`Product "${result.name}" created successfully!`);
+        actionResult = await dispatch(createProduct(payload));
       }
 
+      if (actionResult.error) {
+        setErrors({ form: actionResult.payload || "Failed to save product" });
+        setIsSubmitting(false);
+        return;
+      }
+
+      const saved = actionResult.payload;
+      setNotice(`Product "${saved.name}" saved successfully!`);
+
       setTimeout(() => {
-        navigate(`/product/${result.id}`);
+        navigate(`/product/${saved.id}`);
       }, 700);
     } catch (err) {
       console.error("Failed to save product:", err);
-      setErrors({ form: "Could not save product. Please check fields and try again." });
+      setErrors({ form: err.message || "Could not save product. Please check fields." });
       setIsSubmitting(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      {/* Sticky Admin Navbar */}
       <AdminNavbar activeTab="products" />
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-[1536px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-7 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-7 space-y-6">
         {/* Page Header with Breadcrumbs & Actions */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-1">
           <div className="space-y-1">
             {/* Breadcrumb Navigation */}
-            <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium mb-1">
-              <Link
-                to="/product"
-                className="hover:text-foreground transition-colors"
-              >
+            <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
+              <Link to="/product" className="hover:text-foreground transition-colors">
                 Products
               </Link>
               <ChevronRight className="size-3 text-muted-foreground/60" />
-              <span className="text-indigo-600 dark:text-indigo-400 font-semibold">
+              <span className="text-blue-600 dark:text-blue-400 font-semibold">
                 {editId ? "Edit Product" : "Create Product"}
               </span>
             </nav>
@@ -220,7 +255,7 @@ export default function CreateProductPage() {
             <button
               type="button"
               onClick={() => navigate("/product")}
-              className="rounded-xl border border-border/90 bg-card px-4 py-2 text-xs font-semibold text-foreground hover:bg-muted/70 transition-colors shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer"
+              className="rounded-xl border border-border/80 bg-card px-4 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors shadow-2xs cursor-pointer"
             >
               Cancel
             </button>
@@ -228,10 +263,19 @@ export default function CreateProductPage() {
               type="button"
               onClick={handleSave}
               disabled={isSubmitting}
-              className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 sm:px-5 py-2 text-xs font-semibold text-white shadow-xs hover:bg-indigo-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:opacity-50 cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 sm:px-5 py-2 text-xs font-semibold text-white shadow-2xs hover:bg-blue-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50 cursor-pointer"
             >
-              <span>Save Product</span>
-              <ArrowRight className="size-3.5" />
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="size-3.5 animate-spin" />
+                  <span>Saving...</span>
+                </>
+              ) : (
+                <>
+                  <span>Save Product</span>
+                  <ArrowRight className="size-3.5" />
+                </>
+              )}
             </button>
           </div>
         </div>

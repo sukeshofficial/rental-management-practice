@@ -56,43 +56,41 @@ export function ProductPreviewCard({
     if (product.image) {
       return [product.image];
     }
-    return [
-      "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1512790182412-b19e6d62bc39?auto=format&fit=crop&w=800&q=80",
-    ];
+    return [];
   }, [product.images, product.image, product.imagePreview]);
 
   const totalImages = images.length;
-  const currentImage = images[activeImageIndex % totalImages] || images[0];
+  const currentImage = images[activeImageIndex % totalImages] || images[0] || null;
 
   const handlePrev = (e) => {
     e?.stopPropagation();
+    if (totalImages <= 1) return;
     setActiveImageIndex((prev) => (prev > 0 ? prev - 1 : totalImages - 1));
   };
 
   const handleNext = (e) => {
     e?.stopPropagation();
+    if (totalImages <= 1) return;
     setActiveImageIndex((prev) => (prev < totalImages - 1 ? prev + 1 : 0));
   };
 
   // Format currency
   const formatINR = (val) => {
+    if (val === "" || val === undefined || val === null) return "0";
     const num = Number(val);
     if (isNaN(num)) return "0";
     return num.toLocaleString("en-IN");
   };
 
-  const productName = product.name?.trim() || "Canon EOS R6";
+  const productName = product.name?.trim() || "Product Name";
   const basePrice =
     product.price !== undefined && product.price !== ""
       ? formatINR(product.price)
-      : "2,500";
-  const categoryName = product.category || "Cameras & Accessories";
-  const colorName = product.color || "Black";
+      : "0";
+  const categoryName = product.category || "Select category";
+  const colorName = product.color || "Standard";
   const descriptionText =
-    product.description ||
-    "High-performance full-frame mirrorless camera with 20.1MP sensor, 4K video recording and advanced autofocus. Ideal for professional photography and videography.";
+    product.description || "Enter product description...";
 
   return (
     <>
